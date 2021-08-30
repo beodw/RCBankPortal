@@ -1,0 +1,1422 @@
+{% extends "base.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+{#%if branch_name == 'IT SUPPORT' or 'Admin'%#}
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<!-- Resolve positioning conflict between bootsrap modal and semancit ui modal classes -->
+<style>
+
+#toast-container > .toast-success {
+  background-color: #003ce0;
+  
+}
+</style>
+
+<!-- Position tostr below navbar -->
+<style>
+.toast-top-center { 
+    top: 100px; 
+}
+</style>
+{#%endif%#}
+
+{%endblock AdditionalAssets%}
+
+
+{%block content%}
+ <div class='container-fluid'>
+  <h1 class="ui center aligned icon header">
+    <img class="md-48" src="{%static 'aMgnt/assets/google icons/local_shipping_black_48dp.svg' %}">
+    <br>
+    <!-- <i class="shipping fast icon"></i> -->
+    {%if user.username == 'IT SUPPORT'%}Supply{%else%}Supplied{%endif%} Hardware
+  </h1>
+  <hr>
+   <div class='row mb-3'>
+       <div class="col">
+         <!-- <h1 class='pb-3'>Supplied Hardware</h1> -->
+       </div>
+       <div class='col-auto'>
+          {%if branch_name != 'IT SUPPORT'%}
+            <button class='ui label btn-sm mr-1' style='background: #0040a6;  color: white;' id='gen_report_button'>Generate Report</button>
+          {%endif%}
+        
+          {%if branch_name == 'IT SUPPORT' %}
+          <!-- Later on limit this only to IT SUPPORT -->
+              <!-- <a href="{% url 'create_supply' %}"><button class='btn btn-sm' style='background-color: #024fcc; color: white;'>Supply Hardware</button></a> -->
+             <!--  <button  class='ui label' style='background-color: #0040a6; color: white;' id='supply_hardware_button'>Supply Hardware</button> -->
+              <button style="background-color: #0040a6;" id="supply_hardware_button" class="mdc-fab inline-demo-fab mdc-ripple-upgraded mr-2">
+                <div class="mdc-fab__ripple"></div>
+              <i aria-hidden="true" class="material-icons mdc-fab__icon"><!---->add<!----></i>
+              </button>
+          {%endif%}
+      </div>
+   </div>
+<div id="openSupplylinkContainer"></div>
+  <table id="example1"  class="table table-sm table-hover table-condensed">
+    <thead style="background-color: rgba(50, 50, 90, 0.15);">
+      <tr>
+        {% if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}
+          <th>Branch</th>
+        {%endif%}
+        <th>Recipient Staff</th>
+        <th>Date of Supply</th>   
+        <th>Date of Confirmation</th>
+        <th>Status</th>       
+      </tr>
+    </thead>
+    <tbody>
+      {%for supply in supplies%}
+                <a id='supply{{supply.id}}' href="{% url 'supply_details' supply.id %}" hidden=""></a>
+
+        <tr id='{{supply.id}}'>
+          {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}
+            <td>{{supply.branch}}</td>
+          {%endif%}
+          <td>{{supply.assigned_to}}</td>
+          <td>{{supply.date_of_supply}}</td>
+          <td>
+            {%if supply.date_of_confirmation is None%}
+              Not Yet Confirmed
+            {%else%}
+              {{supply.date_of_confirmation}}
+            {%endif%}
+        </td>
+
+        <td>
+            {%if supply.status == 'Pending' %}
+               <span hidden>Pending</span>
+              <span class='bg-warning align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+            {%elif supply.status == 'Received' %}
+              <span hidden>Received</span>
+              <span class='bg-success align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+            {%elif supply.status == 'Problem' %}
+              <span hidden>Problem</span>
+              <span class='bg-danger align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+            {%endif%}
+          </td>
+        </tr>
+      {%empty%}
+          <tr>
+          <td colspan="7" class="dataTables_empty">No Supply Records</td>
+          <!-- Hidden td so dataTables does not throw any errors -->
+          <td hidden ></td>
+          {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}<td hidden></td>{%endif%}
+          </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- Modal input form to supply new hardware -->     
+<div class="ui large long modal" style=" left: auto !important;" id='supply_hardware_Modal'>
+    <div class="header">
+      Supply Hardware Form
+       <i class="close icon"></i>
+    </div>
+    <div class="content" id='supply_modal_content'>
+      <form method="POST" class="ui form" id="supply_hardware_Modal_form">
+        {%csrf_token%}
+
+        <div class="ui steps w-100" style="position: relative;" id='supply_steps'>
+              <div class="active step" style="width: 25%;" id='step1'>
+                <i class="building icon"></i>
+                <div class="content">
+                  <div class="title">Branch</div>
+                  <div class="description">Choose a Branch</div>
+                </div>
+              </div>
+
+              <div class="step" style="width: 25%;"  id='step2'>
+                <i class="sitemap icon"></i>
+                <div class="content">
+                  <div class="title">Recepient Staff</div>
+                  <div class="description">Enter receiving staff</div>
+                </div>
+              </div>
+
+
+               <div class="step" style="width: 25%;"  id='step3'>
+                <i class="boxes icon"></i>
+                <div class="content">
+                  <div class="title">Hardware</div>
+                  <div class="description">Add Hardware</div>
+                </div>
+              </div>
+
+
+              <div class="step" style="width: 25%;"  id='step4'>
+                <i class="tasks icon"></i>
+                <div class="content">
+                  <div class="title">Confirm</div>
+                  <div class="description">CrossCheck Details</div>
+                </div>
+              </div>
+
+        </div>
+
+        <div class="supply_form_contents_container w-100">
+
+          <div id='supply_steps_content1' class="ui form">
+        
+              <div class="">
+                    <div class="mb-2"><h3><span> Branch</span></h3></div>
+                    <select class="form-control" id='id_branch' name='branch' required style="opacity: 0.5;">
+                      <option value="" selected>--Choose Branch--</option>
+                      {%for branch in branches_to_select_from%}
+                        <option value="{{branch.name}}">{{branch.name}}</option>
+                      {%endfor%}
+                    </select>
+
+              </div>
+          </div>
+
+
+          <div id='supply_steps_content2' class="ui form" hidden>
+            <div class="w-100">
+              <div class="row mb-3 pl-2"> <h3>Supplying Branch <span id='supplying_branch_label'>(Please choose a branch)</span></h3></div>
+              <div class="row w-100 p-3" id="select_deps_form_step">
+                    <div class="row mb-3 mt-0 w-100">
+                        <label for="assigned_to">Receiving Staff:</label>
+                        <input type="text" name="assigned_to" id='assigned_to' placeholder="Manager or director" class="form-control w-100">
+                    </div>
+              </div>
+
+           <!--    <div class="row"><button type='button' class="btn btn-sm mt-2 bg-warning" id="add_dep_button">Add a department</button></div> -->
+        
+            </div>
+          </div>
+
+          <div id='supply_steps_content3' class="ui form" hidden>
+            <div class="">
+                  <div class="row mb-3 pl-2 w-100"> <h3>Supplying Branch <span id='supplying_branch_label_for_step_3'>(Please choose a branch)</span></h3></div>  
+                  <div id='hardware_contents_form_step_container'>
+                          
+                        <div class="" id="hardware_contents_form_step1">
+                               <div class="row pl-2 w-100">
+                                    
+                                </div>
+                                <div class="row pl-2 w-100 mb-3" id="id_hardware_type_container1">
+                                    <!-- Department added to string on back e.g. if risk is added asa dep without department it is saved as Risk Department -->
+                                      <div class="row pl-2 w-100 mb-1" id='hardware_id_select_container1'>
+                                        <div class="row w-100 pl-2">
+                                              <label for="id_hardware_type1">Hardware 1:</label>
+                                              <select name="hardware_type" id="id_hardware_type1" class="form-control hardware_type">
+                                                    <option selected >--Choose Type--</option>
+
+                                                    <option value="Server">
+                                                          Server
+                                                    </option>
+
+                                                    <option value="SystemUnit">
+                                                          Work Station
+                                                    </option>
+
+                                                    <option value="Laptop">Laptop</option>
+
+                                                    <option value="Other">
+                                                          Other
+                                                    </option>
+                                              </select>
+                                        </div>
+                                              <div id="hardware_type_details_container1" class="row w-100 pl-2">
+                                                
+
+                                              </div>
+                                    </div>
+                                </div>
+                                  <input type="number" hidden name="num_SystemUnit" value="0">
+                                  <input type="number" hidden name="num_server" value="0">
+                                  <input type="number" hidden name="num_Other" value="0">
+                                  <input type="number" hidden name="num_laptop" value="0">
+                          </div>
+                  </div>
+              <div class="row"><button type='button' class="btn btn-sm mt-2 ml-2 bg-warning" id="add_hardware_button">Add Another Hardware</button></div>
+        
+            </div>
+          </div>
+
+
+          <div id='supply_steps_content4' class="ui form" hidden>
+            <div class="">
+                   
+                <div class="row pl-2 w-100">
+                    <h2>Confirmation</h2>
+                </div>
+
+                  <div class="row pl-2 w-100">
+
+                    <h4> <p style="color:red;">Make sure the information supplied is correct. It cannot be edited after submission until the branch recieves the hardware!</p></h4>
+                </div>
+          
+        
+            </div>
+          </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="actions">
+         <button class="ui icon button pr-4" type='button' style='background-color: #024fcc; color: white;' id='supply_hardware_Modal_form_prev_button' >
+           <i class="chevron left icon"></i>
+          Back
+        </button>
+
+        <button class="ui icon bg-warning button pl-4" id='supply_hardware_Modal_form_submit_button' type="button">
+          Next
+          <i class="chevron right icon"></i>
+        </button>
+    </div>
+<!-- input to keep track of number of hardware supplied. Makes back end work easier -->
+
+  </form>
+
+
+</div>
+
+
+{%if branch_name == 'Admin'%}
+  <!-- Modal input form to gen report  -->
+  <div id="gen_report_data_Modal" class="ui large modal">
+        <div class="header">
+          <i class="close icon"></i>
+          <div class="row w-100">
+                  <div class="col-4">
+                      <h4>Generate Report </h4> 
+                  </div>
+
+                  <div class="col-auto">
+                      <h4><label id='gen_report_error_message' style="color: red;"></label></h4>
+                  </div>
+                  <div class="col"></div>
+          </div>
+        </div>
+         <div class="content" style="overflow-y: scroll; height: 300px;">  
+            <div class="description" id="gen_report_form_select_container">
+                    <form method="post" id="gen_report_form" action="{% url 'gen_report' %}">
+                      <div id='id_selected_branches_for_report' hidden></div>
+                    <label for="generate_for">Generate For:</label>
+                    <div id="id_generate_for" class="ui fluid search selection multiple dropdown" name="generate_for">
+                      <i class="dropdown icon"></i>
+                      <div class="default text">--Select branch user(s)--</div>
+                      <div class="menu">
+                        <!--   <div class="item" data-value="All Branches" data-text="All Branches">
+                            All Branches
+                          </div> -->
+                        {% for branch in branches_to_select_from %}
+                          {%if branch.name != 'IT SUPPORT'%}
+                            <div class="item" data-value="{{branch.name}}" data-text="{{branch.name}}">
+                              {{branch.name}}
+                            </div>
+                          {%endif%}
+                        {%endfor%}
+                      </div>
+                    </div>
+                   <!--   {{report_form}} -->
+                      <div id='csrftoken_for_gen_report_container'>
+                           {%csrf_token%}
+                      </div> 
+                    </form>  
+            </div> 
+         </div> 
+          <div class="actions">  
+                 <button id='gen_report_form_subimt_button' type="submit" class="ui icon button mb-2" style='background: #0040a6; color: white; width: auto;'><i class="download icon"></i>Generate
+                 </button> 
+          </div> 
+  </div>  
+{%endif%}
+
+<!-- Gen report form for branch reports -->
+{%if branch_name != 'Admin'%}
+<form id="branch_gen_report" action="{% url 'gen_report' %}" method='post' hidden>
+  {%csrf_token%}
+  <input type="text" name="generate_for" value="{{branch_name}}" hidden>
+</form>
+{%endif%}
+
+
+{%endblock content%}
+
+<!--  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    -->
+<!-- JS SECTION -->
+
+{%block scripts%}
+<!-- Set toastr options -->
+<script>
+toastr.options = {
+  "closeButton": false,
+  "debug": true,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-top-center",
+  "preventDuplicates": true,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "10000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
+  $(document).ready(function (){
+    if({{error}}){
+     toastr.error('{{message}}')
+    }
+    else { 
+      if({{success}}){
+        toastr.success('{{message}}')
+      }
+    }
+
+  });
+</script>
+
+
+<script>
+  num_SystemUnit = 0
+  num_server = 0
+  num_Other = 0
+  num_laptop = 0
+</script>
+<!-- Datatable config script -->
+<script type="text/javascript">
+  //SCRIPT FOR DATATABLE
+  $(document).ready(function () {
+    var table = $("#example1").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      "aLengthMenu": [[25, 50, 75, 200, -1], [25, 50, 75, 200, "All"]],
+      "iDisplayLength": 200,
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": false,
+      order:[[0,"asc"]]
+    })
+
+    $('#example1 tbody').on('dblclick', 'tr', function () {
+        $('#openSupplylinkContainer').append(`<a id='OpenSupplyLink' href="/asset/supplyDetails/${$(this).attr('id')}" ></a>`);
+        $('#openSupplylinkContainer').children('a')[0].click();
+    } );
+    
+  });
+</script>
+
+
+<!-- Script to handle add hardware step3 of supply form-->
+<script>
+  //Remove IT SUPPORT since it is not a branch and thus should not be supplied. new hardware to IT SUPPORT is simply added.
+  $('#id_branch').children(':contains(IT SUPPORT)').remove()
+  $('#id_branch').change(
+        ()=>{
+            $('#id_branch').removeAttr('style')//change branch select border color back to normal if turned red by for validation =.
+            $('#supplying_branch_label_for_step_3').text( $('#id_branch').val() ) //set supplying branch name at top of form step3
+        }
+  );
+
+
+
+ $('#assigned_to').on('input', 
+          ()=>{
+                $('#assigned_to').removeAttr('style')//change assigned_to text input border color back to normal if turned red by form validation.
+          }
+  );
+
+ $('.hardware_type').change(
+      function (){
+
+        $(this).removeAttr('style')//remove red border from hardware select if addded by form validation
+
+        if ($(this).attr('prev') == 'Server'){
+                    num_server = num_server - 1
+                    $('input[name="num_server"]').attr('value', num_server)
+                  }
+                  if($(this).attr('prev')=='SystemUnit'){
+                    num_SystemUnit = num_SystemUnit - 1
+                    $('input[name="num_SystemUnit"]').attr('value', num_SystemUnit)
+                  }
+                  if($(this).attr('prev')=='Other'){
+                    num_Other = num_Other - 1
+                    $('input[name="num_Other"]').attr('value', num_Other)
+                  }
+                  if($(this).attr('prev')=='Laptop'){
+                  	num_laptop = num_laptop - 1
+                  	$('input[name="num_laptop"]').attr('value', num_laptop)
+
+                  }
+
+                  $(this).attr('prev',$(this).val())
+
+      }
+ );
+
+
+
+//Set brand and model red, for inital hardware component, if it does not contain Dell Optiplex XXXX and hardware type is SystemUnit. I have no idea how the field goes back to normal when proper input is typed. It just does.
+$("#id_brand_and_model1").on('input', 
+          function () {
+            //Get hardware id, to check hardware type from select widget, using slicing and negative indexing.
+            var num_hardware_gotten_from_id = $(this).attr('id').slice(-1)
+            var hardware_type = $('#id_hardware_type' + num_hardware_gotten_from_id).val()
+
+            var brand_and_model_error = !/^\bDell OptiPlex \d{4}$/.test( $(this).val() )
+
+         
+            if ( brand_and_model_error && hardware_type == 'SystemUnit' ){
+
+                $(this).attr('style', 'border:1px solid red;')
+                step_3_flag = false
+
+            }
+            else {  step_3_flag = true; }
+          }
+);
+
+//Change department input back to normal on input.
+$('#id_department').on('input',
+      function () {
+        $(this).removeAttr('style')
+      }
+);
+
+$("input[name*='serial_number']").on('input', 
+    function(){
+      var val = $(this).val
+      var id = $(this).attr('id')
+        $("input[name*='serial_number']").each(
+          function(){
+            if ( $(this).val() == val && $(this).attr('id') != id ){
+              $(this).attr('style', 'border:1px solid red')
+              tostr.error('serial number has already been entered')
+            }
+
+          }
+        );
+    }
+
+);
+
+
+serial_number_errors = 1//Set to 1 initially beacuse when serial numbers match there are at least two input fields highlited red. So updating this var by 1 makes it equal to 2 which then allows for an easy if statement to rmove highlights when the last error is fixed by user.
+
+  num_hardware = 1
+
+  $('#add_hardware_button').click( 
+        ()=>{ 
+            num_hardware = num_hardware + 1; 
+            $('#hardware_contents_form_step'+current_dep_being_filled).append(
+                  `  
+                    <div class="row pl-2 mb-1"  id="id_hardware_type_container${num_hardware}">
+                        <div class="row w-100 pl-2">
+                              <label for="id_hardware_type${num_hardware}">Hardware ${num_hardware}:</label>
+                              <select name="hardware_type" id="id_hardware_type${num_hardware}" class="form-control hardware_type">
+                                    <option selected >--Choose Type--</option>
+
+                                    <option value="Server">
+                                          Server
+                                    </option>
+
+                                    <option value="SystemUnit">
+                                          Work Station
+                                    </option>
+
+                                    <option value="Laptop">
+		                                  Laptop
+                                    </option>
+
+                                    <option value="Other">
+                                          Other
+                                    </option>
+                              </select>
+                          </div>
+                          <div id="hardware_type_details_container${num_hardware}" class="row w-100 pl-2 mb-3">
+                                                
+
+                            </div>
+                    </div>
+
+                  ` 
+            );        
+
+            //event handler for removing --Choose Type-- option from hardware type select.
+             $('.hardware_type').change(
+                    function () {
+                          // $('#id_hardware_type'+num_hardware).attr('style','opacity:1.0;')
+                          if ($(this).attr('prev') == 'Server'){
+
+                            num_server = num_server - 1
+                            $('input[name="num_server"]').attr('value', num_server)
+
+                          }
+                          if($(this).attr('prev')=='SystemUnit'){
+                            num_SystemUnit = num_SystemUnit - 1
+                            $('input[name="num_SystemUnit"]').attr('value', num_SystemUnit)
+                          }
+                          if($(this).attr('prev')=='Other'){
+                            num_Other = num_Other - 1
+                            $('input[name="num_Other"]').attr('value', num_Other)
+                          }
+                          if($(this).attr('prev')=='Laptop'){
+                          	num_laptop = num_laptop - 1
+                          	$('input[name="num_laptop"]').attr('value', num_laptop)
+                          }
+
+                          $(this).attr('prev',$(this).val())
+
+
+                          $(this).find(":first-child:contains('--Choose Type--')").remove()
+                          id = $(this).attr('id').replace('id_hardware_type','')
+
+                          add_form_els(id, $(this).val())
+
+                           $(this).removeAttr('style')//remove red border from hardware select if addded by form validation
+
+
+                    var holder = String(num_hardware - 1)
+                    var selectorA ="input[name*='serial_number']"
+                    //Bind input event listener, to check if serial number is the same in any two fileds.
+                     $(selectorA).on('input',
+                                function (){
+                                  var serial_number = $(this).val()
+                                  var current_input_id = $(this).attr('id')
+                                  $("input[name*='serial_number']").each(
+                                          function (index){
+                                              if(  $(this).val() == serial_number && $(this).attr('id')!= current_input_id ){
+                                                $(this).attr('style','border:1px solid red;')
+                                                $("#"+current_input_id).attr('style','border:1px solid red;')
+                                                step_3_flag = false
+                                                serial_number_errors = serial_number_errors + 1
+                                                $(this).attr('marker', current_input_id)
+                                              }
+                                              else{
+
+                                                if($(this).val() != serial_number && $(this).attr('id')!= current_input_id){
+                                                 
+                                                  step_3_flag = true
+
+                                                  $('input[marker='+ current_input_id+']').removeAttr('style')
+
+                                                  if(serial_number_errors > 1){
+                                                   serial_number_errors = serial_number_errors - 1
+                                                  }
+
+
+                                                }
+                                                
+                                                
+
+                                              }
+
+                                          }
+                                  );
+                                }
+
+                      );
+
+                    //Set brand and model red if it does not contain Dell Optiplex XXXX and hardware type is SystemUnit. 
+                    var selector ="input[name='brand_and_modelSystemUnit" + holder + "']"
+                     $(selector).on('input', 
+                                function () {
+                                  //Get hardware id, to check hardware type from select widget, using slicing and negative indexing.
+                                  var num_hardware_gotten_from_id = $(this).attr('id').slice(-1)
+                                  var hardware_type = $('#id_hardware_type' + num_hardware_gotten_from_id).val()
+
+                                  var brand_and_model_error = !/^\bDell OptiPlex \d{4}$/.test( $(this).val() )
+
+                               
+                                  if ( brand_and_model_error && hardware_type == 'SystemUnit' ){
+
+                                      $(this).attr('style', 'border:1px solid red;')
+                                      step_3_flag = false
+
+                                  }
+                                  else {  step_3_flag = true; }
+                                }
+                      );
+
+
+
+
+
+
+
+
+
+                    }
+              );
+
+             
+
+        }  
+  );//append deps and update of number of deps var
+
+function add_form_els(id, hardware_type){
+
+$('#hardware_type_details_container'+id).children().remove()//remove previously displayed form elems if any
+
+  if (hardware_type == 'Server'){
+    num_server = num_server + 1 
+    $('input[name="num_server"]').attr('value', num_server)
+      elems = ` 
+      <div id='hardware_type_details_container_child_div${id}' class='Software_capable_hardware_form_components w-100 pb-2 supply_hardare_form_components'>
+           {{add_hardware_form}}
+            {{Software_capable_hardware_form_components}}
+            <input type="text" value="Server" name="Server" hidden />
+      </div>
+      `
+        $('#hardware_type_details_container'+id).append(elems)
+
+      $('#hardware_type_details_container_child_div'+id).children().each(
+        function(){
+          $(this).attr('name', $(this).attr('name') + 'server' +num_server)
+        }
+
+      );
+  }
+  if (hardware_type == 'SystemUnit'){
+    num_SystemUnit = num_SystemUnit + 1 
+    $('input[name="num_SystemUnit"]').attr('value',num_SystemUnit)
+    elems = `
+    <div id='hardware_type_details_container_child_div${id}' class='System_unit_form_components w-100 pb-2 supply_hardare_form_components'>
+        {{add_hardware_form}}
+        {{System_unit_form_components}}
+    </div>  
+    `
+
+     $('#hardware_type_details_container'+id).append(elems)
+
+     $("label:contains(Serial number)").text('CPU serial number:')
+    $("label:contains(System unit name:)").text('PC name:')
+
+      $('#hardware_type_details_container_child_div'+id).children().each(
+        function(){
+          $(this).attr('name', $(this).attr('name') + 'SystemUnit' +num_SystemUnit)
+        }
+
+      );
+  }
+  if (hardware_type == 'Other'){
+    num_Other = num_Other + 1
+    $('input[name="num_Other"]').attr('value',num_Other)
+    elems = `
+    <div id='hardware_type_details_container_child_div${id}' class="Other pb-2 w-100 supply_hardare_form_components" >
+       {{add_hardware_form}}
+      {{Other}}
+    </div>
+    `
+
+      $('#hardware_type_details_container'+id).append(elems)
+
+      $('#hardware_type_details_container_child_div'+id).children().each(
+        function(){
+          $(this).attr('name', $(this).attr('name') + 'Other' + num_Other)
+        }
+
+      );
+  }
+  if(hardware_type == 'Laptop'){
+
+  	num_laptop = num_laptop + 1
+  	$('input[name="num_laptop"]').attr('value', num_laptop)
+  	elems = `
+  	<div id='hardware_type_details_container_child_div${id}' class='laptop pb-2 w-100 supply_hardare_form_components'>
+	  	{{add_hardware_form}}
+	  	{{System_unit_form_components}}
+  	</div>
+  	`
+
+  	$('#hardware_type_details_container'+id).append(elems)
+  	$('#hardware_type_details_container_child_div'+id).children().each(
+  		function(){
+  			if ( 
+	  				$(this).attr('name') == 'service_tag_code'
+	  				||
+	  				$(this).attr('for') == 'id_service_tag_code' 
+	  				//|| 
+	  				//$(this).attr('name') == 'monitor_serial_number'
+	  				//||
+	  				//$(this).attr('for') == 'id_monitor_serial_number'
+	  				//||
+	  				//$(this).attr('name') == 'keyboard_serial_number'
+	  				//||
+	  				//$(this).attr('for') == 'id_keyboard_serial_number'
+
+
+  				){$(this).remove()}
+  			if($(this).attr('for') == 'id_mouse_serial_number'){$(this).text('Mouse serial number (if any):')}
+            if( $(this).attr('for') == 'id_monitor_serial_number' ){ $(this).text('External monitor serial number (if any):')}
+            if( $(this).attr('for') == 'id_keyboard_serial_number'){ $(this).text('External keyboard serial number (if any):') }
+  			$(this).attr('name', $(this).attr('name') + 'laptop' + num_laptop)
+  		}
+  	);
+
+  }
+
+
+  // append num_hardware to id for each input of the added form.
+  $('#hardware_type_details_container_child_div'+id).children().each(
+            function() {//add num_hardware to each form elem id so back end know which form elems belong to which hardware.
+                $(this).attr('id', $(this).attr('id')+String(id));
+            }
+  );
+
+   $('.supply_hardare_form_components').children().on('input',
+            function (){
+              $(this).removeAttr('style')//remove red border when hardware details typed in step3
+
+
+               if(serial_number_errors == 2){
+                $("input[name='serial_number']").removeAttr('style')
+              }
+
+             
+
+            }
+
+  );
+
+
+}
+</script>
+
+
+<!-- Script to handle add departments step2 of supply form.-->
+<script>
+
+
+  num_deps = 1
+  $('#add_dep_button').click( 
+        ()=>{ 
+            num_deps = num_deps + 1; 
+            $('#select_deps_form_step').append(
+                `  
+                        <div class="row mb-3 w-100">
+                            <label for="department1">Department:</label>
+                            <select style="opacity: 0.53;" class="department" name="department${num_deps}" class="form-control" required id="id_department${num_deps}"></select>
+                            <label for="assigned_to">Assigned to:</label>
+                            <input type="text" name="assigned_to${num_deps}" placeholder="Enter Head Of Department" class="form-control">
+                        </div>
+                `
+            );
+
+            fill_deps_selects(num_deps)
+
+            // Bind event change handler for button
+            $('#id_department'+num_deps).change(
+                  function () {
+                      let current_value_of_select = $(this).val()//set current value of select.
+                      let id = $(this).attr('id')
+                      let already_selected = false
+                      let choose_dep_option_removed = false
+
+
+
+
+                            $('.department').each(//search every select on form to see if selected department has already been chosen.
+                                  function () {
+                                        if($(this).val() == current_value_of_select && $(this).attr('id') != id ){
+
+                                              $('#id_department'+num_deps).val('')
+                                              toastr.success('You have already selected that department!')
+                                              already_selected = true
+                                        
+                                              if(!!$("#id_department" + num_deps + ":contains('--Choose Department--')").length){ $('#id_department'+num_deps).append(new Option('--Choose Department--','')); choose_dep_option_removed=false}
+                                             
+                                        }
+
+                                        if (!already_selected){ 
+                                            $('#id_department'+num_deps).find(":first-child:contains('--Choose Department--')").remove()
+                                            choose_dep_option_removed = true
+
+                                        }
+                                  }
+                            );
+
+                  }
+            );
+
+        }  
+  );//append deps and update of number of deps var.
+
+  // Beacuse django automatically generates a list of options for form fields that correspond to a foreign key
+  $('#id_department').html(new Option('Please Select a Branch First',''))
+  
+  $('#id_branch').attr('style','opacity:0.5;')
+   $('.department').attr('style','opacity:0.5;')
+    $('#id_hardware_type').attr('style','opacity:0.5;')
+  // Escape department choices JSON, from backend, as a js object.
+  {% autoescape off %}
+    // All department choices JSON : { 'IT SUPPORT':[ ['Risk','Risk'], ['Legal', 'Legal'] ]  , 'FCHAR':[  ['Finance','Finance']... ] }
+    var all_departments_choices = {{all_departments_choices}}
+    // Display departments based onselected branch
+    $('#id_branch').change(()=>{
+
+      $('#supplying_branch_label').text( " "+$('#id_branch').val() )//set supplying branch label in step 2 of form.
+
+      $('#id_branch').find(":first-child:contains('--Choose Branch--')").remove()
+
+      var new_options = `<option value="">--Choose Department--</option>`
+          if ( $('#id_branch').val() == '' ) {
+
+              for (i=1; i <= num_deps; i++){//Add please select message to all dep select fields added.
+                $('#id_department'+i).html(new Option('Please Select a Branch First',''))
+                $('#id_department'+i).attr('disabled','')
+              }
+
+
+          }
+
+          else{
+
+              // for ( departments of all_departments_choices[ $('#id_branch').val() ] ){
+              //     new_options += `<option value="${departments[0]}">${departments[1]}</option>` 
+              // }
+              
+              if (new_options.length == 47){//when branch has no departments only --choose department-- option is part of new_options. its length is then 47.
+                // $('#id_department').attr('disabled','')
+                new_options = `<option value="">No Departments Have Been Added To This Branch</option>`
+              }
+
+
+              for(i=1; i<=num_deps; i++){  $('#id_department'+i).html(new_options)  }//set departments options for all dep select fields added.
+
+
+          }
+
+
+    });
+
+  // Remove --choose department-- option when a department is selected for department1 which is always on form.
+  $('#id_hardware_type1').change(()=>{
+    add_form_els(1, $('#id_hardware_type1').val());
+
+
+    //remove choose option from hardware type select.
+    $('#id_hardware_type1').find(":first-child:contains('--Choose Type--')").remove()
+
+    //Set brand and model red if it does not contain Dell Optiplex XXXX and hardware type is SystemUnit.
+    $("#id_brand_and_model1").on('input', 
+              function () {
+                //Get hardware id, to check hardware type from select widget, using slicing and negative indexing.
+                var hardware_type = $('#id_hardware_type1').val()
+
+                var brand_and_model_error = !/^\bDell OptiPlex \d{4}$/.test( $(this).val() )
+
+             
+                if ( brand_and_model_error && hardware_type == 'SystemUnit' ){
+
+                    $(this).attr('style', 'border:1px solid red;')
+                    step_3_flag = false
+
+                }
+                else {  step_3_flag = true; }
+              }
+    );
+
+
+  });
+
+
+  {% endautoescape %}
+</script>
+
+<script>
+function fill_deps_selects(num_deps){
+       var new_options = `<option value="">--Choose Department--</option>`
+                if ( $('#id_branch').val() == '' ) {
+
+
+
+                    // for (i=1; i <= num_deps; i++){//Add please select message to all dep select fields added.
+                      $('#id_department'+num_deps).html(new Option('Please Select a Branch First',''))
+                      $('#id_department'+num_deps).attr('disabled','')
+                    // }
+
+
+                }
+
+                else{
+
+                    for ( departments of all_departments_choices[ $('#id_branch').val() ] ){
+                        new_options += `<option value="${departments[0]}">${departments[1]}</option>` 
+                    }
+                    
+                    if (new_options.length == 47){//when branch has no departments only --choose department-- option is part of new_options. its length is then 47.
+                      // $('#id_department').attr('disabled','')
+                      new_options = `<option value="">No Departments Have Been Added To This Branch</option>`
+                    }
+                
+                      //set departments options for all dep select fields added.
+                     $('#id_department'+num_deps).html(new_options)
+                   
+
+
+
+                }
+}
+</script>
+
+<!-- Script to contorl supply hardware modal  -->
+<script>
+var current_step = 1 //var to keep track of form step.  
+var final_section = false // var to flag end of form.
+
+//prevent submitting of form before final section.
+  $('#supply_hardware_Modal_form').on('submit',
+      (e)=>{ 
+              if(!final_section){
+                      e.preventDefault(); 
+              }
+
+      }
+  );
+
+$('#supply_hardware_button').click(//show modal when supply hardware button clicked. 
+      ()=>{  
+
+            $('#supply_hardware_Modal').modal({ 
+                      closable: false, 
+                      onApprove : ()=> { 
+
+                            return false;
+                      },  
+
+            }).modal('show');
+
+      }
+
+);
+</script>
+
+<!-- Script to control next button on supply hardware form -->
+<script>
+
+  current_dep_being_filled = 1//var to keep track of which department is being supplied in step 3 of form.
+  hardware_id_form_tracker = 1//var to keep track of id of each new hardware select added.
+  $('#supply_hardware_Modal_form_submit_button').click( 
+        ()=>{
+          switch (current_step){//check if for for current step is valid.
+            case 1://for step 1. Select branch
+           
+              if (! $('#supply_hardware_Modal_form').form('is valid', 'id_branch') ){
+                $('#id_branch').attr('style','border:1px solid red;')
+                return
+              }
+              break;
+            case 2:
+            var flag = false
+            if (! $('#supply_hardware_Modal_form').form('is valid', 'assigned_to') ){
+                $('#assigned_to').attr('style','border:1px solid red;');
+                  flag = true
+            }
+            if (! $('#supply_hardware_Modal_form').form('is valid', 'department') && $('#id_branch').val() == "IT SUPPORT"){
+                $('#id_department').attr('style','border:1px solid red;');
+                  flag = true
+            }
+            if (flag) {return}
+
+              break;
+            case 3:
+            try{
+              //Global var used to prevent form from advancing until all fileds are appropriately filled.
+                step_3_flag = false
+                $('.hardware_type').each(//bind change event listener to initial hardware type select to chekc if it has been selected.
+                        function () {
+
+                          if ( $(this).val() == '--Choose Type--' ){ 
+                            $(this).attr('style','border:1px solid red')
+                            step_3_flag = true
+                          }
+
+                        }
+                );
+
+                $('.supply_hardare_form_components').children().each(
+                            function (){
+                                  //check if any form elem is empty and set border to red if this is the case.
+                                  if ( $(this).val() == '' && $(this).prop('nodeName') != 'LABEL') {
+                                    //ignore scanner, printer and modem form elems as they are optional and can be empty
+                                        if ( !$(this).attr('id').includes('printer') && !$(this).attr('id').includes('scanner') && !$(this).attr('id').includes('modem') ){
+                                        
+                                            $(this).attr('style','border:1px solid red;')
+                                            step_3_flag = true
+                                        }
+                                        
+                                  }
+
+                            }
+                );
+
+                    //make sure all serial numbers are atleast 5 char in length
+                     $("input[name='serial_number']").each( 
+                        function () {
+                              //Intentional error to terminate execution of step 3. 
+                              if( $(this).val().length < 5 ){
+                                $(this).attr('style','border:1px solid red;')
+                                throw 'A serial number field is under 5 chars'
+                               
+                              }
+
+                        } 
+                      );
+
+                if(step_3_flag){return}
+              }catch(error){
+                //Apparently, returning undefined stops js execution?
+            
+                  return undefined
+              }
+
+                break;
+
+            case 4:
+              break;
+
+            default: 
+              break;
+
+          }
+
+            // submit form on final section
+            if (final_section) {
+                $('#supply_hardware_Modal_form').submit();
+                return true
+            }
+            //if previous button clicked all the way back to start. 0 is used to prevent animation when on inital step and previous button clicked.
+            if(current_step == 0){current_step = 1} 
+
+            // Transition from current step to next step////////////////////////////
+        
+            if(current_step <= 4){
+                      $('#supply_steps_content'+current_step).transition(  
+                          {animation:'fade right', duration:'200ms',
+                                onComplete: ()=>{ 
+
+                                      
+                                        $('#step'+current_step).attr('class','step') // unactivate current step
+                                                           
+                                        if (current_step < 4) {current_step = current_step + 1}
+                                        if(current_step == 2){ 
+                                          
+                                          if(  $('#id_branch').val() == "IT SUPPORT"){
+                                             $('#department_label').removeAttr('hidden'); $('#id_department').removeAttr('hidden'); 
+                                          }
+                                          else{
+                                               $('#department_label').attr('hidden', ''); $('#id_department').attr('hidden', ''); 
+                                          }
+                                         
+                                        } 
+                                        if (current_step == 4) {
+                                          final_section = true; 
+                                          $('#supply_hardware_Modal_form_submit_button').attr('class', 'ui positive button'); $('#supply_hardware_Modal_form_submit_button').html(`Confirm `);
+                                        }
+                                        $('#step'+current_step).attr('class', 'active step')
+                                        $('#step').next().attr('class','active step')
+                                        // Transition into next step
+
+                                        $('#supply_steps_content'+current_step).transition(  {animation:'fade left', duration:'200ms'}  )
+
+                                        $('#supply_modal_content').attr('class','w-100 content');   
+                                        $('#supply_steps_content'+current_step).removeAttr('hidden');
+
+
+                                 } 
+                          }
+                      );
+            }
+
+            ///////////////////////////////////////////////////////////////////
+                            
+        } 
+
+  );
+
+</script>
+
+<!-- Script for previous button on supply hardware form -->
+<script>
+$('#supply_hardware_Modal_form_prev_button').click(
+
+      ()=>{
+
+          if(final_section){//previous button takes you back from final section if clicked at final section.
+            final_section = false;
+          }
+
+          if (current_step > 1 ){
+
+
+                 $('#supply_steps_content'+current_step).transition(
+                          {animation:'fade left', duration:'200ms',
+                                  onComplete: ()=>{ 
+
+                                      $('#step'+current_step).attr('class','step')//unactivate current step
+                                      if (current_step == 4){
+                                        $('#supply_hardware_Modal_form_submit_button').attr('class', 'ui icon bg-warning button pl-4'); $('#supply_hardware_Modal_form_submit_button').html(`Next  <i class="chevron right icon"></i>`); 
+                                      }
+                                      if (current_step < 5) {current_step = current_step - 1}
+
+                                      if(current_step == 1){//make department input normal again
+                                        $('#id_department').removeAttr('style');
+                                      }
+                                        
+                                      $('#step'+current_step).attr('class', 'active step')//activate previous
+
+
+                                      // Transition previous step onto screen
+                                      $('#supply_steps_content'+current_step).transition( {animation:'fade right',duration:'200ms'} )
+
+                                      $('#supply_modal_content').attr('class','w-100 content' ); 
+                                      $('#supply_steps_content'+current_step).removeAttr('hidden');
+                                      
+
+                                  } 
+
+                          }
+
+                  );
+
+
+
+          }
+          else{
+            current_step = 0 
+
+          }
+
+    }
+
+
+);
+</script>
+
+<!-- Script to validate supply hardware form components -->
+<script>
+
+//form rules for step 1
+$('#supply_hardware_Modal_form').form(
+      {
+            fields: {
+              id_branch: 
+                    {
+                      identifier: 'id_branch',
+                      rules: [ { type   : 'empty', } ]
+                    }
+                    ,
+                  department:
+                    {
+                      identifier: 'department',
+                      rules: [ { type : 'empty', } ] 
+
+                    }
+                    ,
+
+              assigned_to:
+                    {
+                      identifier: 'assigned_to',
+                      rules: [ {type: 'empty',}, ]
+                    }
+                    ,
+
+
+
+
+            }
+      }
+);
+  
+</script>
+<!-- end if for IT SUPPORT branch -->
+
+
+{%if branch_name == 'Admin'%}
+<!-- Script to gen_report -->
+<script>
+  //script to remove red outline when form elems are inputted
+  $('#gen_report_form').children('select, input').each(
+        function (){
+          $(this).on('input', 
+              function (){
+                $(this).removeAttr('style')
+              }
+          );
+        }
+  );
+  //set call back to remove error text from modal if any when closed.
+  $('#gen_report_data_Modal').modal(
+        {
+          onHidden : ()=>{
+           $('#gen_report_error_message').text(''); 
+           $('#id_selected_branches_for_report').children.each(
+                function(){$(this).remove()}
+            );
+           // window.location.replace("{% url 'gen_report' %}"); 
+          } ,
+        }
+  );
+// blind event handler to submit form on click.
+  $('#gen_report_form_subimt_button').click(
+      ()=>{
+        var is_valid = true
+        //check if any form elem is not filled out properly.
+         $('#gen_report_form').children('select, input').each(
+              function (){
+
+                if ($(this).val() == '' || $(this).val() == undefined || $(this).val() == null){
+                  
+                  is_valid = false
+                  $(this).attr('style', 'border:1px solid red;');
+                }
+
+              }
+          );
+         if(is_valid){
+               $('#gen_report_form').submit()
+         }
+
+      }
+  );
+//show gen report modal when 'Generate Report' button is clicked
+  $('#gen_report_button').click(
+      ()=>{
+          $('#gen_report_data_Modal').modal('show')
+      }
+  );
+
+
+  function get_generate_for_values(){
+    $("#id_selected_branches_for_report").children().each(
+      function(){
+        $(this).remove();
+      }
+    );
+    var selected_branches_to_generate_for = []
+    $('#id_generate_for').children('.ui.label.transition.visible').each(
+        function(){
+          // $('').append( `${$(this).text()}` )
+          $('#id_selected_branches_for_report').append(`<input type="text" name="generate_for" value="${$(this).text()}" hidden>`)
+        }
+    );
+    return selected_branches_to_generate_for
+  }
+//submit gen report form using AJAX.
+//Get csrf token from gen report form.
+ var csrf_token = $("#csrftoken_for_gen_report_container").children().val() 
+  $('#gen_report_form').submit( 
+        (e)=>{
+          get_generate_for_values()
+          if( $('#id_selected_branches_for_report').html().length == 0 ){e.preventDefault(); toastr.error('No branch is selected.')} 
+              // get_generate_for_values()
+              //$('#gen_report_form_subimt_button').removeAttr('style')
+              // $('#gen_report_form_subimt_button').attr('class', 'loading ui button tiny btn-sm mr-1')
+
+              // $('#gen_report_data_Modal').modal('hide')
+
+              // $('#gen_report_form_subimt_button').attr('style','background: #0040a6; color: white; width: auto;')
+              // $('#gen_report_form_subimt_button').attr('class', 'ui button tiny btn-sm mr-1')
+
+              // window.location.reload()
+               // window.location.reload()
+               // window.open()
+
+              // $('#gen_report_data_Modal').modal('hide')
+
+
+              // $.ajax({
+              //     headers: {'X-CSRFToken': csrf_token},
+              //     method: "POST",
+              //     url: "{%url 'gen_report'%}",
+              //     data: { 
+              //       generate_for: get_generate_for_values(),
+              //       purpose: 'gen_report',
+              //     }
+              //     ,
+                  // mode: 'same-origin',
+                  // success: (dataReturned, status, jqXHR)=>{
+                  //   $('#gen_report_form_subimt_button').attr('style','background: #0040a6; color: white; width: auto;')
+                  //   $('#gen_report_form_subimt_button').attr('class', 'ui button tiny btn-sm mr-1')
+                  //   // Handle pdf
+                  //   $('#gen_report_data_Modal').modal('hide')
+                  //   //clear all form fields
+                  //   $('#gen_report_form').children('select, input').each(
+                  //     function(){$(this).val('');}
+                  //   );
+
+//                     let pdfWindow = window.open("")
+// pdfWindow.document.write(
+//     "<iframe width='100%' height='100%' src='data:application/pdf, " +
+//     escape(dataReturned) + "'></iframe>"
+// )
+
+ // let a = document.createElement("a");
+ // a.href = "data:application/octet-stream"+escape(dataReturned);
+ // a.download = "Report.docx"
+ // a.click();
+
+//  window.open(escape(dataReturned) )
+                  // },
+                  // error: (jqXHR, error, exception)=>{
+                  //   // remove_report_modal()
+                  //   $('#gen_report_form_subimt_button').attr('style','background: #0040a6; color: white; width: auto;')
+                  //   $('#gen_report_form_subimt_button').attr('class', 'ui button tiny btn-sm mr-1')
+                  //   $('#gen_report_error_message').text(`A problem occured while trying to generate the report.`)
+                  // },
+
+                  
+              // });
+          }  
+  );
+</script>
+<!-- Add name='branch' to supply form -->
+{%endif%}
+
+<script>
+  $('#id_branch').children(':contains(All Branches)').remove()
+</script>
+
+{%if branch_name == 'Admin'%}
+<script>
+  $('.ui.selection.dropdown').dropdown(
+      {
+        onShow : () => { $('#gen_report_form_select_container').attr('style','height:100px;') }
+        ,
+        // onChange: (value, text, $choice) => { if (value == 'All Branches'){ $('.item:not(:contains(All Branches))').hide() } }
+        // ,
+      }
+  );
+</script>
+
+{%endif%}
+
+
+{%if branch_name != 'Admin'%}
+  <script>
+      $('#gen_report_button').click(
+        function(){
+          $('#branch_gen_report').submit()
+          // $(this).attr('style','')
+          // $(this).attr('class', 'ui tiny loading button')
+        }
+      );
+  </script>
+{%endif%}
+
+<script>
+  $('.ui.modal').modal({ 
+      closable : false, 
+    });
+
+  $('.close.icon').click(
+    ()=>{
+      $('.ui.modal').modal('hide all')
+    }
+  );
+</script>
+{%endblock scripts%}

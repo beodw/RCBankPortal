@@ -1,0 +1,134 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Rokel End of Day Processing</title>
+  <!-- Rokel Icon -->
+  <link rel="icon" href="{% static 'nMeet/assets/dist/img/favicon.png' %}" type="image/gif" sizes="20x20">
+   <!-- Toastr -->
+  <link rel="stylesheet" href=" {%static 'nMeet/assets/plugins/toastr/toastr.min.css' %}">
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href=" {% static 'nMeet/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %} ">
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/dt_fixedheader/FixedHeader-3.1.7/css/fixedHeader.bootstrap.min.css' %} ">
+  <!-- Google Fonts -->
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+  <!-- <link rel="stylesheet" href="{% static 'nMeet/assets/google_fonts/Sans_Pro.css' %}"> -->
+  <!-- Font for all text -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&display=swap" rel="stylesheet"> -->
+  <!-- <link rel="stylesheet" href="{% static 'nMeet/assets/google_fonts/Titillium_Web.css' %}"> -->
+  <!-- Font for logout navbar link -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300&display=swap" rel="stylesheet"> -->
+  <!-- Font Awesome -->
+  <!-- <link rel="stylesheet" href="{% static 'nMeet/assets/plugins/fontawesome-free/css/all.min.css' %}"> -->
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'nMeet/assets/dist/css/adminlte.min.css' %}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="{% static 'nMeet/assets/plugins/ionicons/css/ionicons.min.css' %}">
+  <!-- base style sheet -->
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/plugins/base/base.css'%}">
+
+  <link href="{%static 'aMgnt/assets/google-material-design/material-design.css'%}" rel="stylesheet">
+
+  <!-- Semantic UI CSS -->
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/themes/Semantic-UI/semantic.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/my_css/semantic-UI-hot-fix.css' %}">
+
+  <!-- jQuery -->
+  <script src="{% static 'nMeet/assets/plugins/jquery/jquery.min.js' %}"></script>
+  <!-- Bootstrap 4 JS -->
+  <script src="{% static 'nMeet/assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %} "></script>
+  <!-- AdminLTE App -->
+  <!-- <script src="{% static 'nMeet/assets/dist/js/adminlte.min.js' %}"></script> -->
+  <!-- jquery-validation -->
+  <script src="{% static 'nMeet/assets/plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+  <script src="{% static 'nMeet/assets/plugins/jquery-validation/additional-methods.min.js' %}"></script>  
+  <!-- Toastr -->
+  <script src="{% static 'nMeet/assets/plugins/toastr/toastr.min.js' %}"></script>
+  <!-- DataTables JS -->
+  <script src=" {% static 'nMeet/assets/plugins/datatables/jquery.dataTables.min.js' %} "></script>
+  <script src=" {% static 'nMeet/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src=" {% static 'nMeet/assets/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src=" {% static 'nMeet/assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'nMeet/assets/dt_fixedheader/FixedHeader-3.1.7/js/dataTables.fixedHeader.min.js' %}"></script>
+
+<!--                                    Semantic UI JS                                      -->
+<script  src="{% static 'nMeet/assets/themes/Semantic-UI/semantic.min.js' %}"></script>
+
+  {%block AdditionalAssets%} {%endblock AdditionalAssets%}
+
+</head>
+
+<body style="zoom:88%;font-size: 14px; font-family: 'Titillium Web', sans-serif; overflow-x: hidden !important; max-width: 100%;">
+  <div class="ui small borderless menu">
+    <div class="ui container-fluid grid">
+      <div class="computer only row">
+        <a class="item" href="{% url 'redirectLandingPage' %}">
+            <img src="{% static 'nMeet/assets/logo/RCB.jpg' %}" style="margin-left:15px;width: 45px; height: 45px; border-radius:50%;">
+        </a>
+        <span class="item">Rokel End Of Day Meeting</span>
+        {%if user.username != "Admin" and user.username != "IT SUPPORT"%}
+        <span class="item">Branch {{user.username}}</span>
+        {%else%}
+        <span class="item">{{user.username}}</span>
+        {%endif%}
+        <div class="right menu">
+            <a class="item" href="{% url 'nMeetDashboard' %}">Dashboard</a>
+            {%if user.username == 'Admin' or user.username == 'IT SUPPORT'%}
+            <a class="item" href="{% url 'nMeetCancelFigs' %}">Cancel Figs</a>
+            {%endif%}
+            {%if user.username != 'Admin' and user.username != 'IT SUPPORT'%}
+              <a class="item" href="{% url 'nMeetEnterFigures' %}">Enter Figures</a>
+            {%endif%}
+            <a class="item" href="{% url 'nMeetLogout' %}">Logout</a>
+        </div>
+      </div>
+       <div class="tablet mobile only row">
+        <a class="item ml-3" href="{% url 'redirectLandingPage' %}">
+            <img src="{% static 'nMeet/assets/logo/RCB.jpg' %}" style="width: 45px; height: 45px; border-radius:50%;">
+        </a>
+        <span class="item">Rokel Asset Management</span>
+        <span class="item">{{user.username}}</span>
+        <div class="right menu">
+          <div class="menu item" style="margin-right: -20px;">
+            <div class="ui floating dropdown item">
+                <div class="ui grey icon button"><i class="content icon" style="color:white;"></i></div>
+                <div class="menu">
+                  <a class="item" href="{% url 'nMeetDashboard' %}">Dashboard</a>
+                  {%if user.username == 'Admin' or user.username == 'IT SUPPORT'%}
+                  <a class="item" href="{% url 'nMeetCancelFigs' %}">Cancel Figs</a>
+                  {%endif%}
+                  {%if user.username != 'Admin' and user.username != 'IT SUPPORT'%}
+                    <a class="item" href="{% url 'nMeetEnterFigures' %}">Enter Figures</a>
+                  {%endif%}
+                  <hr class="mt-0 mb-0">
+                  <a class="item" href="{% url 'nMeetLogout' %}">Logout</a>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <!-- Content Wrapper. Contains page content -->
+  {% block content %} {% endblock content %}
+  <!-- /.content-wrapper -->
+<hr>
+<footer style=" text-align: center; width: 100%;">
+    Copyright &copy; 
+              {{date}}
+             RCBank.
+    All rights reserved.
+</footer>
+<script type="text/javascript">$(".dropdown").dropdown()</script>
+</body>
+</html>
+
+{%block scripts%} {%endblock scripts%}
+
+

@@ -1,0 +1,32 @@
+{%load static%}
+<html>
+<head>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Encode+Sans+Semi+Condensed:100,200,300,400" rel="stylesheet"> -->
+    <link href="{%static 'redirect/css/generic500page.css'%}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/my_css/semantic-UI-hot-fix.css' %}">
+</head>
+<body class="loading" style="zoom:88%;">
+  <h1>:(</h1>
+  <h2>Unexpected Error...Please contact IT SUPPORT or admin.</h2>
+  <div class="gears">
+    <div class="gear one">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear two">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear three">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+  <script src="{% static 'nMeet/assets/plugins/jquery/jquery.min.js' %}"></script>
+  <script  src="{% static 'nMeet/assets/themes/Semantic-UI/semantic.min.js' %}"></script>
+  <script type="text/javascript">$(()=>{setTimeout(()=>{$('body').removeClass('loading');}, 1000);});</script>
+</body>
+</html>

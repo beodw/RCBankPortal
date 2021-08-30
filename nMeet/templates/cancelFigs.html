@@ -1,0 +1,88 @@
+{% extends "nMeetBase.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+  body{ overflow-y: scroll; }
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+{%if user.username == 'Admin' or user.username == 'IT SUPPORT'%}                   
+<div class='container-fluid'>
+	<h1>Cancel Figures</h1>
+	<hr>
+	<div class="ui segments container">
+		<div class="ui segment">
+			<form id="cancel_figures_form" method="POST">
+				{%csrf_token%}
+				<div class="row"> 
+					<label>Branch:</label>
+			        <select class="form-control" name="branch" required="">
+			        	{%for branch in branches%}
+                           <option value = '{{branch}}'>{{branch}}</option>
+                        {%endfor%}
+			        </select>
+			        <label>Teller or operator:</label>
+                   <select class="form-control" name="teller_or_operator" required="">
+			        	{%for num in '111111111111111'|make_list%}
+				        	{%if forloop.counter < 10%}
+				        	<option value="CA TELLER{{forloop.counter}}">CA TELLER{{forloop.counter}}</option>
+				        	{%else%}
+					        <option value="CA TELLER{{forloop.counter}}">CA TELLER{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        	{%for num in '1111111111'|make_list%}
+				        	{%if forloop.counter < 10%}
+				        	<option value="CA OPERATOR{{forloop.counter}}">CA OPERATOR{{forloop.counter}}</option>
+				        	{%else%}
+				        	<option value="CA OPERATOR{{forloop.counter}}">CA OPERATOR{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        	{%for num in '1111111111'|make_list%}
+				        	{%if forloop.counter < 10%}
+				        	<option value="SA TELLER{{forloop.counter}}">SA TELLER{{forloop.counter}}</option>
+				        	{%else%}
+				        	<option value="SA TELLER{{forloop.counter}}">SA TELLER{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        	{%for num in '1111111111'|make_list%}
+				        	{%if forloop.counter < 10%}
+				        	<option value="SA OPERATOR{{forloop.counter}}">SA OPERATOR{{forloop.counter}}</option>
+				        	{%else%}
+				        	<option value="SA OPERATOR{{forloop.counter}}">SA OPERATOR{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        	{%for num in '11111'|make_list%}
+				        	{%if forloop.counter < 10%}
+				        	<option value="FO TELLER{{forloop.counter}}">FO TELLER{{forloop.counter}}</option>
+				        	{%else%}
+				        	<option value="FO TELLER{{forloop.counter}}">FO TELLER{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        	{%for num in '11111'|make_list%}
+			        	{%if forloop.counter < 10%}
+				        	<option value="FO OPERATOR{{forloop.counter}}">FO OPERATOR{{forloop.counter}}</option>
+				        	{%else%}
+				        	<option value="FO OPERATOR{{forloop.counter}}">FO OPERATOR{{forloop.counter}}</option>
+				        	{%endif%}
+			        	{%endfor%}
+			        </select>
+			    </div>
+		        <button type="submit" id="submit" style="background-color:#00307d; color:white;" class="ui tiny button mt-2 ml-0">Submit</button>		
+			</form>
+		</div>
+	</div>
+</div>
+{%endif%}
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+if({{error}}){toastr.error('{{message}}');}
+if({{success}}){toastr.success('{{message}}');}
+</script>
+{%endblock scripts%}

@@ -1,0 +1,190 @@
+{%extends 'base.html'%}
+{%load static%}
+
+{%block AdditionalAssets%}
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<style type="text/css">
+	.btn{color:white;background-color:#00307d;}.zoom{zoom:100%;}.is_blank{border:1px solid red;}
+	@-webkit-keyframes slideUp {
+	  0%   { transform: translate(0px,0px); }
+	  100% { transform: translate(0px,-5px); }
+	}
+	@-moz-keyframes slideUp {
+	  0%   { transform: translate(0px,0px); }
+	  100% { transform: translate(0px,-5px); }
+	}
+	@-o-keyframes slideUp {
+	  0%   { transform: translate(0px,0px); }
+	  100% { transform: translate(0px,-5px); }
+	}
+	@keyframes slideUp {
+	  0%   { transform: translate(0px,0px); }
+	  100% { transform: translate(0px,-5px); }
+	}
+	.showResolutionDetails{ animation-name: slideUp;
+	 animation-duration: 0.7s; 
+	 animation-fill-mode: forwards;
+	 }
+</style>
+{%endblock AdditionalAssets%}
+{%block content%}
+<div class="container-fluid">
+<h1 class="ui center aligned icon header">
+<img class="md-48" src="{%static 'aMgnt/assets/google icons/report_black_48dp.svg' %}"><br>
+  General Incidents Log
+</h1>
+<hr>
+<div class=" d-flex flex-row-reverse">
+    <button style="background-color: #0040a6;" id="reportIncidentButton" class="mdc-fab inline-demo-fab mdc-ripple-upgraded mr-2">
+      <div class="mdc-fab__ripple"></div>
+    <i aria-hidden="true" class="material-icons mdc-fab__icon"><!---->add<!----></i>
+    </button>
+	<!-- <button id="reportIncidentButton" class="ui label" style="background-color: #0040a6; color: white;" id="supply_hardware_button">Log Incident</button> -->
+</div>
+<br>
+<table id="generalIncidentsDashboard" class="table table-sm table-hover">
+	<thead style="background-color: rgba(50, 50, 90, 0.15);">
+		{%if user.username == "Admin" or user.username == "IT SUPPORT"%}<th>Branch</th>{%endif%}
+		<th>Date</th>
+		<th>Time</th>
+		<th>Description</th>
+		<th>Reporting Staff</th>
+		<th>Severity</th>
+		<th>Status</th>
+	</thead>
+	<tbody>
+
+	</tbody>
+</table>
+</div>
+{%csrf_token%}
+<!-- Modal to report new incident -->
+<div class="ui modal mini" id="report-incident-modal">
+  <div class="header">
+  	<i class="close icon"></i>
+    Log Incident
+  </div>
+  <div class="content">
+	  <div class="description" id="newIncidentsContainer">
+	  	{%if user.username == "Admin" or user.username == "IT SUPPORT"%}
+		<label for="branch">Branch:</label>
+		<select name="branch" class="form-control" required >
+			<option value="">--Select a Branch--</option>
+			{%for branch in branches%}
+			<option value="{{branch.name}}">{{branch.name}}</option>
+			{%endfor%}
+		</select>
+	  	{%endif%}
+	  	<label for="date">Date:</label>
+  		<input type="date" name="date" class="form-control mb-1" required />
+  		<label for="time">Time:</label>
+  		<input type="time" name="time" class="form-control mb-1" step="1" required>
+  		<label for="reportingStaffName">Reporting Staff Name:</label>
+  		<input type="text" name="reportingStaffName" class="form-control" placeholder="e.g. Ralph Taylor Smith" required>
+  		<label for="description" class="mt-1">Description:</label>
+  		<textarea name="description" style="min-height: 110px;" class="form-control mb-1" required ></textarea>
+  		<label for="resolution">Status:</label>
+  		<select name="resolution" class="form-control" required>
+  			<option selected value="">--Select an option--</option>
+  			<option value="0">Not Resolved</option>
+  			<option value="1">Resolved</option>
+  			<option value="2">Forwarded To Supervisor</option>
+  		</select>
+  		<label hidden>resolutionDetails</label>
+		<textarea style="min-height: 110px;" name="resolutionDetails" class="form-control" hidden required ></textarea>
+  		<label for="severity">Severity:</label>
+  		<select name="severity" class="form-control" required />
+  			<option value="">--Select severity--</option>
+  			<option value="True">Severe</option>
+  			<option value="False">Non-severe</option>
+  		</select>
+	  </div>
+  </div>
+  <div class="actions">
+    <button name="reportButton" class="ui tiny button" style="background-color: #00307d; color: white;" onclick="reportNewIncident()" type="submit">Log Incident</button>
+  </div>
+</div>
+{%endblock content%}
+
+{%block scripts%}
+<script>
+	var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+	toastr.options = {
+		  "closeButton": false,
+		  "debug": false,
+		  "newestOnTop": false,
+		  "progressBar": false,
+		  "positionClass": "toast-top-center",
+		  "preventDuplicates": true,
+		  "onclick": null,
+		  "showDuration": "300",
+		  "hideDuration": "1000",
+		  "timeOut": "2050",
+		  "extendedTimeOut": "1000",
+		  "showEasing": "swing",
+		  "hideEasing": "linear",
+		  "showMethod": "fadeIn",
+		  "hideMethod": "fadeOut",
+	}
+	var generalIncidentsDashboard = $("#generalIncidentsDashboard").DataTable({
+	  "fixedHeader": true,
+      "responsive": true,
+      "autoWidth": false,
+      "aLengthMenu": [[10,20,30,50,70,100,200,500,1000], [10,20,30,50,70,100,200,500,1000]],
+      "iDisplayLength": 200,
+      "scrollY":true,
+      "paging": true,
+      "pageLength": 20,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": false,
+      "info": true,
+      'order':[[1,"asc"]],
+      'processing':true,
+      'serverSide':true,
+      "ajax":{type:'POST',data:{'csrfmiddlewaretoken':csrf_token},url:'{%url "aMgntGetIncidents" %}'},
+        "columns": [
+        {%if user.username == 'Admin' or user.username == 'IT SUPPORT'%}
+            { "data": "Branch" },
+        {%endif%}
+            { "data": "Date" },
+            { "data": "Time" },
+            { "data": "Description" },
+            { "data": "Reporting Staff" },
+            { "data": "Severity" },
+            { "data": "Status" }
+        ]
+	    });
+	$(document).ready(function(){
+		$('.close.icon').click(()=>{$('.ui.modal').modal('hide');});
+		$('#report-incident-modal').modal({closable:false,dimmerSettings:{useCSS:true}});
+		$('#reportIncidentButton').click(()=>{$('#report-incident-modal').modal('show');});
+		$('#generalIncidentsDashboard tbody').on('dblclick','tr',function(){window.location.assign('{%url "aMgntGeneralIncident" 0 %}'.slice(0,-2) + $(this).attr('id') + '/' ); });
+	});
+	$('input,textarea').focus(function(){$(this).removeClass('is_blank');});
+	function reportNewIncident(){
+			var incident = {{%if user.username == "Admin" or user.username == "IT SUPPORT"%}Branch:'',{%endif%}Date:'',Time:'',ReportingStaffName:'',Description:'',Status:'',Resolution:'',Severity:''};
+			var i=1;
+			for (property in incident){
+				var input = $('#newIncidentsContainer').children(':eq('+i+')');
+				if(input.val() != ''){incident[property]=input.val().trim();i+=2; input.removeClass('is_blank');}
+				else if(input.attr('name')=='resolutionDetails' && input.attr('hidden')=='hidden'){i+=2;}
+				else{toastr.warning('Please fill all fields.');input.addClass('is_blank'); return;}
+			}
+			incident.csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+			$('button[name="reportButton"]').css('background-color','#a5a8a6');
+			$('button[name="reportButton"]').html(`<div class="spinner-grow spinner-border-sm spinner-grow-sm"></div>`);
+			$('button[name="reportButton"]').attr('disabled','');
+			$.ajax('{%url "aMgntGeneralIncidents" %}',{method:'POST',data:incident,success:(response)=>{$('button[name="reportButton"]').css('background-color','#00307d');$('button[name="reportButton"]').html('Log Incident');$('button[name="reportButton"]').removeAttr('disabled');$('.ui.modal').modal('hide');$('#newIncidentsContainer').children().each(function(){$(this).val('');});if(response.success){if(incident.Severity == 'True'){var severity = 'Severe'}else if(incident.Severity == 'False'){var severity = 'Non-severe'}if(incident.Status == '0'){var status = 'Not Resolved'}else if(incident.Status == '1'){var status = 'Resolved'}else if(incident.Status == '2'){var status = 'Forwarded To Supervisor'}generalIncidentsDashboard.row.add({ {%if user.username == "Admin" or user.username == "IT SUPPORT"%}'Branch':incident.Branch,{%endif%}'Date':incident.Date,'Time':incident.Time,'Reporting Staff':incident.ReportingStaffName,'Description':incident.Description,'Severity':severity,'Status':status}).draw();$('textarea[name="resolutionDetails"]').attr('hidden','');toastr.success(response.message);}else{toastr.error(response.message);}},error:()=>{toastr.error('Could not connect to server. Check your internet connection.');$('button[name="reportButton"]').css('background-color','#00307d');$('button[name="reportButton"]').html('Log Incident');$('button[name="reportButton"]').removeAttr('disabled');}});
+	}
+	$('select[name="resolution"]').change(function(){
+		if($(this).val() == '1'){
+			$('textarea[name="resolutionDetails"]').addClass('showResolutionDetails');$('textarea[name="resolutionDetails"]').removeAttr('hidden');
+		}
+		else{$('textarea[name="resolutionDetails"]').removeClass('showResolutionDetails');$('textarea[name="resolutionDetails"]').attr('hidden','');}
+	});
+	if('{{success}}' == '1'){toastr.success('{{message}}');}
+	else if('{{success}}' == '0'){toastr.error('{{message}}');}
+</script>
+{%endblock scripts%}

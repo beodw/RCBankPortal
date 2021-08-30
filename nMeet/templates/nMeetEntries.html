@@ -1,0 +1,81 @@
+{%extends "nMeetBase.html"%}
+
+{%block content%}
+<div class="container-fluid">
+	<h1 class="ui header">Entries</h1>
+	<hr>
+
+	 <table id="example1"  class="table table-bordered table-sm table-hover table-condensed ">
+    <thead class="thead-light">
+      <tr>
+
+         <th>Department</th>
+         <th>Assigned Role</th>  
+        <th>Serial Number</th> 
+        <th>Brand and Model</th>
+        <th>Type</th>  
+        <th style="width: 10px;">Condition</th>            
+      </tr>
+    </thead>
+    <tbody>
+      {%for entry in entries%}
+              <tr>
+                <td>{%if asset.department == ''%}Not Yet Assigned{%else%}{{asset.department}}{%endif%}</td>
+                 <td>{%if asset.assigned_to != '' %}{{asset.assigned_to}}{%else%}Not Yet Assigned{%endif%}</td>
+                <td>{{asset.serial_number}}</td>
+                <td>{{asset.brand_and_model}}</td>
+
+                {%if asset.hardware_type == 'SystemUnit'%}
+                    <td> WorkStation</td>
+                {%else%}
+                    <td>{{asset.hardware_type}}</td>
+                {%endif%}
+
+                <td>
+                  {%if asset.condition == 'Good' %}
+                    <span hidden>Good</span>
+                    <span class='bg-success align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%elif asset.condition == 'Mid' %}
+                    <span hidden>Fault</span>
+                    <span hidden>Mid</span>
+                    <span class='bg-warning align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%elif asset.condition == 'Bad' %}
+                    <span hidden>Fault</span>
+                    <span hidden>Poor</span>
+                    <span class='bg-danger align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%endif%}
+                </td>
+              </tr>
+      {%empty%}
+          <tr>
+          <td colspan="9" class="dataTables_empty">No Entries Have Been Made</td>
+          <!-- Hidden td so dataTables does not throw any errors -->
+         
+          <td hidden ></td>
+          <td hidden ></td>
+          {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}<td hidden></td> <td hidden></td>{%endif%}
+          </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+</div>
+{%endblock content%}
+
+
+{%block scripts%}
+	<script type="text/javascript">
+	  var table = $("#example1").DataTable({
+		  "fixedHeader": true,
+	      "responsive": true,
+	      "autoWidth": false,
+	      "aLengthMenu": [[25, 50, 75, 200, -1], [25, 50, 75, 200, "All"]],
+	      "iDisplayLength": 200,
+	      "paging": true,
+	      "lengthChange": true,
+	      "searching": true,
+	      "ordering": true,
+	      "info": false,
+	      order:[[0,"asc"]]
+	    });
+	</script>
+{%endblock scripts%}

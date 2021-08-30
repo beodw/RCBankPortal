@@ -1,0 +1,752 @@
+{% extends "base.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+ <div class='container-fluid'>
+  <h1 class="ui center aligned icon header">
+    <img class="md-48" src="{% static 'aMgnt/assets/google icons/desktop_windows_black_48dp.svg' %}">
+    <br>
+    {%if user.username == 'Admin' or user.username == 'IT SUPPORT'%}All{%else%}{{user.username}}{%endif%} Computer Assets
+  </h1>
+  <hr>
+     <!-- Temporary Add hardware button for easy initial integration -->
+     {%if branch_name != 'Admin' and branch_name != 'IT SUPPORT' %}
+     <div class="d-flex flex-row-reverse">
+      <button style="background-color: #0040a6;" id="add_hardware_button" class="mdc-fab inline-demo-fab mdc-ripple-upgraded mr-2">
+        <div class="mdc-fab__ripple"></div>
+        <i aria-hidden="true" class="material-icons mdc-fab__icon"><!---->add<!----></i>
+      </button>
+     </div>
+     {%endif%}
+</div>
+<div id="openSupplylinkContainer"></div>
+<div class='container-fluid mt-2'>
+  <table id="example1"  class="table  table-sm table-hover table-condensed ">
+    <thead style="background-color: rgba(50, 50, 90, 0.15);">
+      <tr>
+        {% if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}
+          <th>Branch</th>
+          <th >Date of Supply</th>
+         {%endif%}
+         <th>Department</th>
+         <th>Assigned Role</th>  
+        <th>Serial Number</th> 
+        <th>Brand and Model</th>
+        <th>Type</th>  
+        <th style="width: 10px;">Condition</th>            
+      </tr>
+    </thead>
+    <tbody>
+      {%for supply in supplies%}
+          {%for asset in supply%}
+              <tr id='{{asset.id}}/{{asset.hardware_type}}'>
+                {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}
+                  <td>{{asset.supply.branch}}</td>
+                  
+                  <td>{{asset.date_of_supply }}</td>
+                {%endif%}
+                <td>{%if asset.department == ''%}Not Yet Assigned{%else%}{{asset.department}}{%endif%}</td>
+                 <td>{%if asset.assigned_to != '' %}{{asset.assigned_to}}{%else%}Not Yet Assigned{%endif%}</td>
+                <td>{{asset.serial_number}}</td>
+                <td>{{asset.brand_and_model}}</td>
+
+                {%if asset.hardware_type == 'SystemUnit'%}
+                    <td> WorkStation</td>
+                {%else%}
+                    <td>{{asset.hardware_type}}</td>
+                {%endif%}
+
+                <td>
+                  {%if asset.condition == 'Good' %}
+                    <span hidden>Good</span>
+                    <span class='bg-success align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%elif asset.condition == 'Mid' %}
+                    <span hidden>Fault</span>
+                    <span hidden>Mid</span>
+                    <span class='bg-warning align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%elif asset.condition == 'Bad' %}
+                    <span hidden>Fault</span>
+                    <span hidden>Poor</span>
+                    <span class='bg-danger align-self-center' style=" height:10px; width:10px; border-radius: 50%; display:inline-block;"></span>
+                  {%endif%}
+                </td>
+              </tr>
+          {%endfor%}
+      {%empty%}
+          <tr>
+          <td colspan="9" class="dataTables_empty">No Hardware Records</td>
+          <!-- Hidden td so dataTables does not throw any errors -->
+         
+          <td hidden ></td>
+          <td hidden ></td>
+          {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}<td hidden></td> <td hidden></td>{%endif%}
+          </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- Modal input form to add new hardware -->
+<div id="add_data_Modal" class="ui modal large add_hardware_modal" style="overflow-y: auto; position:fixed !important; padding-top: 0px !important; top: 100px !important;">  
+  
+  <div class="header">
+      <h3>Add Hardware
+      <i class="close icon"></i></h3>
+  </div>
+      <div class="content">  
+      <div class="description">
+            <form method="post" id="insert_form"> 
+                  {%csrf_token%}
+                  <input hidden name="purpose" value="add_hardware">
+                    <div class="" id='add_hardware_modal'>
+                            {##{supply_details_form}##}
+                            <div id="hardware">
+                              <div id="1" class="added_hardware">
+                                <!--<label class="row" style="padding-left: 6px;"><h3>Hardware 1</h3></label>-->
+                                <label for="hardware_type">Select Hardware Type:</label>
+                                <select required class='form-control' type="text" name='hardware_type' id='id_hardware_type'>
+                                  <option value=''>--Choose--</option>
+                                  <option value="Server">Server</option>
+                                  <option value="SystemUnit">Work Station</option>
+                                  <option value="Laptop">Laptop</option>
+                                  <option value="Other">Other</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div id="additional_hardware"></div>
+                            <input hidden type="number" value="0" id="num_server" name="num_server">
+                            <input hidden type="number" value="0" id="num_SystemUnit" name="num_SystemUnit">
+                            <input hidden type="number" value="0" id="num_Other" name="num_Other">
+                            <input hidden type="number" value="0" id="num_laptop" name="num_laptop">
+                            <input hidden type="number" value="1" id="num_hardware" name="num_hardware">
+                    </div> 
+                     <div id="add_another_hardware_button_container" class="mt-2 row"><!-- <button type="button" class="ml-2 ui tiny yellow button" style="color:black;" id="add_another_hardware_button">Add Another Hardware</button>--><!-- <button type="button" class="ui blue button">Remove Hardware</button>--></div>
+
+      </div>  
+    </div>
+    <div class="actions">
+        <button id="add_hardware_modal_submit_button" class="ui blue button " type="submit">
+          Add
+        </button>
+
+    </div>
+             </form>  
+      
+</div> 
+
+<!-- Modal input form to register new department. THIS SECTION IS TEMPORARY. REMOVE AFTER INTEGRATION OF SYSTSEM OR ALLOW ADMIN TO REMOVE THIS FEATURES BY CHANGING BRAHCN PERMISSSIONS -->
+<div class="ui modal large register_department">
+  <i class="close icon"></i>
+  <div class="header">
+    Register Department
+  </div>
+  <div class=" content">
+
+
+  <div class="description">
+      <form method="post" id="register_department_form"> 
+        {%csrf_token%}
+        <input hidden name='purpose' value='register_department'/>
+        <div class=" w-100" id='register_department_modal'>
+                  <label for="department">Department Name:</label>
+                  <input class='form-control' placeholder="e.g. Finance Department" type="text" name="department" required />
+        </div>  
+          
+  </div>
+
+  </div>
+  <div class="actions">
+
+    <button class="ui  button" style='background-color: #024fcc; color: white;' type="submit">
+      Register
+      
+    </button>
+         </form> 
+
+  </div>
+</div>
+
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+  //SCRIPT FOR DATATABLE
+  $(document).ready(function () {
+    var table = $("#example1").DataTable({
+	  "fixedHeader": true,
+      "responsive": true,
+      "autoWidth": false,
+      "aLengthMenu": [[25, 50, 75, 200, -1], [25, 50, 75, 200, "All"]],
+      "iDisplayLength": 200,
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      order:[[0,"asc"]]
+    });
+
+    $('#example1 tbody').on('dblclick', 'tr', function () {
+         if($(this).attr('id')!=undefined){
+    $('#openSupplylinkContainer').append(`<a id='OpenSupplyLink' href="/asset/viewAsset/${$(this).attr('id')}" ></a>`);
+        $('#openSupplylinkContainer').children('a')[0].click();}
+    } );
+    
+  });
+</script>
+
+<!-- Script for add data modal -->
+{%if branch_name != 'Admin'%}
+<!-- Script to insert appropriate form elements based on selected hardware type -->
+<script>
+
+  var elems;
+  var current_selection_name = ''; 
+  function check(selection){
+    if(current_selection_name==selection){ 
+      return true;
+    }
+    else{ 
+     return false;
+    }
+  
+  }
+  $("#id_hardware_type").change(function(){
+    var selection = $(this).val()
+    if ( selection == 'Other' ){
+          if( check('Other') ){return;}
+      $('#'+current_selection_name+'FormElems').remove()//remove form elems for current sel.
+      current_selection_name = 'Other'
+      elems = `
+      <div id='OtherFormElems'>
+          <label for="assigned_to">Assigned Position:</label>
+          <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+          <label for="serial_number">Serial number:</label>
+          <input type="text" class="form-control" name="serial_number" placeholder="">
+         
+          {{supply_details_form}}
+          {{add_hardware_form}}
+          {{Other}}
+      </div>
+      `
+      num_Other++;
+      $('#num_Other').val(num_Other)
+
+      $('#hardware').append(elems)
+      $('#hardware').children().children('input, select').each(
+          function(){
+            $(this).attr('name', $(this).attr('name')+1)
+          }
+      );
+    }
+    if ( selection == 'SystemUnit') {
+
+        if( check('SystemUnit') ){return;}
+      $('#'+current_selection_name+'FormElems').remove()//remove form elems for current sel.
+      current_selection_name = 'SystemUnit'
+      elems = `
+      <div id='SystemUnitFormElems'>
+            <label for="assigned_to">Assigned Position:</label>
+            <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+            <label for="serial_number">CPU Serial number:</label>
+            <input type="text" class="form-control" name="serial_number" placeholder="">
+        
+            {{supply_details_form}}
+            {{add_hardware_form}}
+            {{System_unit_form_components}}
+      </div>
+      `
+      num_SystemUnit++;
+      $('#num_SystemUnit').val(num_SystemUnit)
+
+      $('#hardware').append(elems)
+
+       $('#hardware').children().children('input, select').each(
+          function(){
+            $(this).attr('name', $(this).attr('name')+1)
+          }
+      );
+
+      $('label[for="id_serial_number"]').text('CPU serial number')
+      $('label[for="id_system_unit_name"]').text('PC name:')
+
+    }
+    if( selection == 'Server'){ 
+      if( check('Server') ){return;}
+      $('#'+current_selection_name+'FormElems').remove()//remove form elems for current sel.
+      current_selection_name = 'Server'
+      elems = `
+      <div id='ServerFormElems'>
+            <label for="assigned_to">Assigned Position:</label>
+            <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+            <label for="serial_number">Serial number:</label>
+            <input type="text" class="form-control" name="serial_number" placeholder="">
+           
+            {{supply_details_form}}
+            {{add_hardware_form}}
+            {{Software_capable_hardware_form_components}}
+            
+      </div>
+      `
+      num_server++;
+      $('#num_server').val(num_server)
+
+      $('#hardware').append(elems)
+
+       $('#hardware').children().children('input, select').each(
+          function(){
+            $(this).attr('name', $(this).attr('name')+1)
+          }
+      );
+
+    }
+    if( selection == "Laptop"){
+      if ( check('Laptop') ) { return;}
+        $('#'+current_selection_name+'FormElems').remove()
+        current_selection_name = 'Laptop'
+
+        elems = `
+          <div id='LaptopFormElems'>
+                <label for="assigned_to">Assigned Position:</label>
+                <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+                <label for="serial_number">Serial number:</label>
+                <input type="text" class="form-control" name="serial_number" placeholder="">
+               
+                {{supply_details_form}}
+                {{add_hardware_form}}
+                
+                {{System_unit_form_components}}
+          </div>
+        `
+        num_laptop++;
+        $('#num_laptop').val(num_laptop)
+        $('#hardware').append(elems)
+        $('#hardware').children().children('input, select').each(
+          function(){
+            $(this).attr('name', $(this).attr('name')+1)
+          }
+        );
+
+        $('input[name="service_tag_code1"]').remove()
+        $('label[for="id_service_tag_code"]').remove()
+
+        $('label[for="id_system_unit_name"]').text('PC Name')
+
+        $('label[for="id_monitor_serial_number"]').text('External monitor (if any):')
+       // $('input[name="monitor_serial_number1"]').remove()
+
+        //$('input[name="keyboard_serial_number1"]').remove()
+        $('label[for="id_keyboard_serial_number"]').text('External keyboard (if any):')
+
+        $('label[for="id_mouse_serial_number"]').text('Mouse serial number (if any):')
+
+    }
+
+  });
+</script>
+
+<style>
+.toast-top-center { 
+    top: 100px; 
+}
+
+
+#toast-container > .toast-success {
+  background-color: #003ce0;
+  
+}
+
+.toast-top-center{
+  position: sticky;
+  top: 9%;
+
+}
+</style>
+
+<script type="text/javascript">
+toastr.options = {
+  "closeButton": false,
+  "debug": true,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-top-center",
+  "preventDuplicates": true,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "2050",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut",
+
+}
+  $(document).ready(function (){
+    if({{show}}){
+
+    if ( {{success}} ) {
+     toastr.success('{{message}}')
+   }
+    
+   if ( {{error}} ) {
+     toastr.error('{{message}}')
+
+  }
+
+
+    }
+
+  });
+</script>
+
+<!-- Script to change select fields opacity for department and hardware type-->
+<script>
+   // $('#id_department').attr('style','opacity:0.5;')
+    // $('#id_hardware_type').attr('style','opacity:0.5;')
+
+    // Display departments based onselected branch
+    $('#id_department').change(()=>{
+      $('#id_department').attr('style','opacity:1.0;')
+
+      $('#id_department').find(":first-child:contains('--Choose Branch--')").remove()
+
+    });
+
+  // Remove --choose department-- option when a department is selected.
+  $('#id_department').change(()=>{
+    $('#id_department').attr('style','opacity:1.0;')
+
+    $('#id_department').find(":first-child:contains('--Choose Department--')").remove()
+
+  });
+
+
+  $('#id_hardware_type').change(()=>{
+    $('#id_hardware_type').attr('style','opacity:1.0;')
+    $('#id_hardware_type').find(":first-child:contains('--Choose Type--')").remove()
+  });
+</script>
+{%endif%}
+
+
+
+<script>
+  $('#register_dep_button').click( 
+        ()=> { $('.ui.modal.register_department').modal('show') }
+  );
+
+   $('#add_hardware_button').click( 
+        ()=> { $('.ui.modal.add_hardware_modal').modal('show') }
+  );
+
+</script>
+
+<!-- Script to bind form validator for system unit serial number when hardware type select is set to workstation-->
+<script>
+  // $('#id_hardware_type').change(
+      // function (){
+      //       if ( $(this).val() == 'SystemUnit'){
+
+      //         $('#insert_form').on('submit', 
+      //               (e)=>{
+      //                 if ( !/^DELL OptiPlex\b \d{4}$/.test( $('#id_brand_and_model').val() ) ){
+      //                   e.preventDefault()
+      //                      toastr.error('WorkStation brand and model must follow the format: DELL OptiPlex XXXX');
+      //                 }
+      //               }
+      //         );
+
+      //           $('#id_brand_and_model').on('input', 
+      //                 function(){
+
+      //                       if ( !/^DELL OptiPlex\b \d{4}$/.test(   $('#id_brand_and_model').val()  )  ) {
+      //                             $(this).attr('style', 'border:1px solid red;')
+      //                       }
+      //                       else{
+      //                             $(this).removeAttr('style')
+      //                       }
+                  
+      //                 }
+      //           );
+      //       }
+
+      // }
+  // );
+</script>
+
+<!-- Script to remove Choose option from hardware type inf add hardware form -->
+<script>
+  $('#id_hardware_type').change(
+            ()=>{  $('#id_hardware_type').children(':contains(--Choose--)').remove()  }
+  );
+</script>
+
+
+
+<script type="text/javascript">
+  var num_hardware = 1;
+  var num_SystemUnit = 0;
+  var num_Other = 0;
+  var num_server = 0;
+  var num_laptop = 0;
+  $('#add_another_hardware_button').click(
+
+    ()=>{
+          num_hardware++;
+          $('#num_hardware').val(num_hardware)
+          $('#additional_hardware').append(`
+            <div id="${num_hardware}" class="w-100 added_hardware" style="padding-left: 6px;">
+              <label class="row" ><h3>Hardware ${num_hardware}</h3></label>
+              <label  class="row" for="hardware_type_${num_hardware}">Hardware Type:</label>
+              <select required class='form-control hardware_type row' type="text" name='hardware_type${num_hardware}' id='id_hardware_type_${num_hardware}'>
+                <option value=''>--Choose--</option>
+                <option value="Server">Server</option>
+                <option value="SystemUnit">Work Station</option>
+                <option value="Other">Other</option>
+              </select>
+              <div class="hardware_elems row w-100"></div>
+            </div>
+          `);
+
+          $('.hardware_type').change(
+            function(){
+              switch ( $(this).attr('current_value') ){
+                case "Server":
+                num_server = num_server - 1;
+                $('#num_server').val(num_server)
+                break;
+
+                case "SystemUnit":
+                num_SystemUnit = num_SystemUnit - 1;
+                $('#num_SystemUnit').val(num_SystemUnit);
+                break;
+
+                case "Other":
+                num_Other = num_Other - 1;
+                $('#num_Other').val(num_Other);
+                break;
+              }
+              $(this).attr('current_value',$(this).val())
+              $(this).parent().children('.hardware_elems').children().each(
+
+                function(){$(this).remove();}
+
+              );
+                var elems_to_add;
+                switch ( $(this).val() ){
+                  case "Server":
+                  num_server++;
+                  $("#num_server").val(num_server)
+
+                    elems_to_add = `
+                    <div class="row ml-1 w-100">
+                      <label for="assigned_to">Assigned Position:</label>
+                      <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+                      <label for="serial_number">Serial number:</label>
+                      <input name="serial_number" type="text" class="form-control">
+                      {{supply_details_form}}
+                      {{add_hardware_form}}
+                     
+                      {{Software_capable_hardware_form_components}}
+                    </div>
+
+                    `
+                  break;
+
+                  case "SystemUnit":
+                   num_SystemUnit++;
+                  $("#num_SystemUnit").val(num_SystemUnit)
+                  elems_to_add = `
+                    <div class="row ml-1 w-100">
+                      <label for="assigned_to">Assigned Position:</label>
+                      <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+                      <label for="serial_number">CPU Serial number:</label>
+                      <input name="serial_number" type="text" class="form-control">
+                      {{supply_details_form}}
+                      
+                      {{add_hardware_form}}
+                      {{System_unit_form_components}}
+                    </div>
+
+                  `
+                  break;
+
+                  case "Other":
+                  num_Other++;
+                  $("#num_Other").val(num_Other)
+
+                  elems_to_add = `
+                    <div class="row ml-1 w-100">
+                      <label for="assigned_to" >Assigned Position:</label>
+                      <input type="text" class="form-control" name="assigned_to" placeholder="e.g. CLERK">
+                      <label for="serial_number">Serial number:</label>
+                      <input name="serial_number" type="text" class="form-control">
+                      {{supply_details_form}}
+                      {{add_hardware_form}}
+                      {{Other}}
+                    </div>
+                    `
+                  break;
+
+                  default:break;
+                }
+
+                $(this).parent()
+                .children('.hardware_elems')
+                .append(elems_to_add);
+
+              $('label[for="id_system_unit_name"]').text('PC name:')
+
+                //Add num hardware to name of each added form elem
+               $(this).parent().children('.hardware_elems').children().children('input, select').each( 
+                  function(){
+                    $(this).attr('name',$(this).attr('name')+ $(this).parent().parent().parent().attr('id') )
+
+                  }
+                );
+            }
+
+
+          );
+    }
+
+  );
+</script>
+
+
+<script>
+  $('#insert_form').submit(
+
+    function(e){
+         $('#add_hardware_modal_submit_button').attr('class','ui loading button')
+      //find matching serial numbers if any.
+      // $('#add_hardware_modal').children().children().children().children('input[name="serial_number"]').each(
+      //       function(){
+      //         alert('workgin')
+      //               if ( $(this).val() != serial_number ){
+      //                 serial_number = $(this).val()
+      //               }
+      //               else{
+
+      //                 $(this).attr('style', 'border:1px solid red;');
+      //                 is_ok = false;
+
+      //               }
+      //       }
+      // ); 
+      // for ( val of Array.from(Array(num_hardware).keys())  ){
+      //   serial_number = $('input[name="serial_number'+ String(val+1) + '"]').val()
+        
+      //   for another_val of 
+      //     if ( serial_number == $('input[name="serial_number'+ String(val+1) + '"]').val() ) {
+      //       // e.preventDefault()
+      //       $('input[name="serial_number'+ String(val) + '"]').attr('style', 'border:1px solid red;')//set previous serial number to red.
+      //       $('input[name="serial_number'+ String(val+1) + '"]').attr('style', 'border:1px solid red;')
+      //       break;
+      //     }
+        
+      // }
+
+      //$('input[name*="serial_number"]').each(
+           //function (index) { 
+
+              //var serial_number = $(this).val()
+              //var name = $(this).attr('name')
+             // $('input[name*="serial_number"]').each(
+                   // function() {
+                        //if($(this).val() == ''){
+                          //Ignore empty serial number inputs.
+                        //}
+                        //else{
+                              //if ($(this).attr('name') != name && $(this).val() == serial_number) {
+                               // e.preventDefault()
+                               // $("input[name='"+ name + "']").attr('style', 'border:1px solid red;')
+                               // $(this).attr('style', 'border:1px solid red;')
+                               // toastr.error('Serial numbers must be unique')
+                                
+
+                              //}
+                              //else{
+                               // $(this).removeAttr('style');
+                               // $('#add_hardware_modal_submit_button').attr('class','ui loading button')
+                             // }
+                       // }
+                   // }
+              //);
+
+
+          //   if (index == 0) {
+          //     serial_number = $(this).val()
+          //   }
+          //   else{
+          //     if ( serial_number == $(this).val() ){
+          //       $('input[name="serial_number'+ String(index) + '"]').attr('style', 'border:1px solid red;')
+          //       $(this).attr('style', 'border:1px solid red;')
+          //     }
+          //     else{
+          //       serial_number = $()
+          //     }
+          //   }
+         // }
+      //);
+      // $('#1').children().each(
+
+      //   function(){
+      //     alert('$(this).val()')
+      //   }
+
+      // );
+
+
+    }
+
+  );
+</script>
+
+<script>
+  $('#id_brand_and_model').replaceWith(
+    `<input list="brow" class="form-control">
+    <datalist id="brow">
+      <option value="Dell OptiPlex">
+    </datalist>
+    `
+  );
+</script>
+
+
+<script type="text/javascript">
+  $('input[name*="serial_number"]').on('change', function(){$(this).removeAttr('style')});
+</script>
+
+
+<script>
+ // $('#add_hardware_modal_submit_button').click(function(){$('#add_hardware_modal_submit_button').attr('class','ui loading button')});
+  $('.ui.modal').modal({
+
+    closable : false,
+
+
+  });
+  $('.close.icon').click(
+    ()=>{
+      $('.ui.modal').modal('hide all')
+    }
+  );
+</script>
+<script type="text/javascript">
+   if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+
+{%endblock scripts%}

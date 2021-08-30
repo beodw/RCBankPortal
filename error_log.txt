@@ -1,0 +1,182 @@
+[28/May/2021:15:05:19] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\aMgnt\views.py changed.
+[28/May/2021:15:05:19] ENGINE Stopped thread 'Autoreloader'.
+[28/May/2021:15:05:19] ENGINE Bus STOPPING
+[28/May/2021:15:05:19] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[28/May/2021:15:05:19] ENGINE Bus STOPPED
+[28/May/2021:15:05:19] ENGINE Bus EXITING
+[28/May/2021:15:05:19] ENGINE Bus EXITED
+[28/May/2021:15:05:19] ENGINE Waiting for child threads to terminate...
+[28/May/2021:15:05:19] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[28/May/2021:15:05:25] ENGINE Bus STARTING
+[28/May/2021:15:05:25] ENGINE Started monitor thread 'Autoreloader'.
+[28/May/2021:15:05:25] ENGINE Serving on http://10.93.101.35
+[28/May/2021:15:05:25] ENGINE Bus STARTED
+[28/May/2021:15:05:25]  Server running at http://10.93.101.35:80 with pid 516. Kill this process to shut down server.
+[02/Jun/2021:15:52:13]  
+
+
+
+database is locked
+
+
+
+
+[09/Jun/2021:10:42:17] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\templatetags\get_usage.py changed.
+[09/Jun/2021:10:42:17] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:10:42:17] ENGINE Bus STOPPING
+[09/Jun/2021:10:42:17] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:10:42:17] ENGINE Bus STOPPED
+[09/Jun/2021:10:42:17] ENGINE Bus EXITING
+[09/Jun/2021:10:42:17] ENGINE Bus EXITED
+[09/Jun/2021:10:42:17] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:10:42:17] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:10:42:25] ENGINE Bus STARTING
+[09/Jun/2021:10:42:25] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:10:42:25] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:10:42:25] ENGINE Bus STARTED
+[09/Jun/2021:10:42:25]  Server running at http://10.93.101.35:80 with pid 2864. Kill this process to shut down server.
+[09/Jun/2021:16:11:28] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:11:28] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:11:28] ENGINE Bus STOPPING
+[09/Jun/2021:16:11:28] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:11:28] ENGINE Bus STOPPED
+[09/Jun/2021:16:11:28] ENGINE Bus EXITING
+[09/Jun/2021:16:11:28] ENGINE Bus EXITED
+[09/Jun/2021:16:11:28] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:11:28] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:11:31] ENGINE Bus STARTING
+[09/Jun/2021:16:11:31] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:11:31] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:11:31] ENGINE Bus STARTED
+[09/Jun/2021:16:11:31]  Server running at http://10.93.101.35:80 with pid 3668. Kill this process to shut down server.
+[09/Jun/2021:16:14:08] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:14:08] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:14:08] ENGINE Bus STOPPING
+[09/Jun/2021:16:14:08] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:14:08] ENGINE Bus STOPPED
+[09/Jun/2021:16:14:08] ENGINE Bus EXITING
+[09/Jun/2021:16:14:08] ENGINE Bus EXITED
+[09/Jun/2021:16:14:08] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:14:08] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:14:09] ENGINE Bus STARTING
+[09/Jun/2021:16:14:09] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:14:09] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:14:09] ENGINE Bus STARTED
+[09/Jun/2021:16:14:09]  Server running at http://10.93.101.35:80 with pid 3720. Kill this process to shut down server.
+[09/Jun/2021:16:15:24] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:15:24] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:15:24] ENGINE Bus STOPPING
+[09/Jun/2021:16:15:24] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:15:24] ENGINE Bus STOPPED
+[09/Jun/2021:16:15:24] ENGINE Bus EXITING
+[09/Jun/2021:16:15:24] ENGINE Bus EXITED
+[09/Jun/2021:16:15:24] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:15:24] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:15:25] ENGINE Bus STARTING
+[09/Jun/2021:16:15:25] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:15:26] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:15:26] ENGINE Bus STARTED
+[09/Jun/2021:16:15:26]  Server running at http://10.93.101.35:80 with pid 3036. Kill this process to shut down server.
+[09/Jun/2021:16:16:53] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:16:53] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:16:53] ENGINE Bus STOPPING
+[09/Jun/2021:16:16:53] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:16:53] ENGINE Bus STOPPED
+[09/Jun/2021:16:16:53] ENGINE Bus EXITING
+[09/Jun/2021:16:16:53] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:16:53] ENGINE Bus EXITED
+[09/Jun/2021:16:16:53] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:16:54] ENGINE Bus STARTING
+[09/Jun/2021:16:16:54] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:16:54] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:16:54] ENGINE Bus STARTED
+[09/Jun/2021:16:16:54]  Server running at http://10.93.101.35:80 with pid 1732. Kill this process to shut down server.
+[09/Jun/2021:16:17:14] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:17:14] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:17:14] ENGINE Bus STOPPING
+[09/Jun/2021:16:17:14] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:17:14] ENGINE Bus STOPPED
+[09/Jun/2021:16:17:14] ENGINE Bus EXITING
+[09/Jun/2021:16:17:14] ENGINE Bus EXITED
+[09/Jun/2021:16:17:14] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:17:14] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:17:15] ENGINE Bus STARTING
+[09/Jun/2021:16:17:15] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:17:15] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:17:15] ENGINE Bus STARTED
+[09/Jun/2021:16:17:15]  Server running at http://10.93.101.35:80 with pid 3900. Kill this process to shut down server.
+[09/Jun/2021:16:18:20] ENGINE Bus STARTING
+[09/Jun/2021:16:18:20] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:18:20] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:18:20] ENGINE Bus STARTED
+[09/Jun/2021:16:18:20]  Server running at http://10.93.101.35:80 with pid 2636. Kill this process to shut down server.
+[09/Jun/2021:16:18:43] ENGINE Restarting because C:\Users\Administrator\Desktop\Rokel Company Portal\rAsset\rAsset\rAsset\rAsset\sMnt\views.py changed.
+[09/Jun/2021:16:18:43] ENGINE Stopped thread 'Autoreloader'.
+[09/Jun/2021:16:18:43] ENGINE Bus STOPPING
+[09/Jun/2021:16:18:43] ENGINE HTTP Server cherrypy._cpwsgi_server.CPWSGIServer(('10.93.101.35', 80)) shut down
+[09/Jun/2021:16:18:43] ENGINE Bus STOPPED
+[09/Jun/2021:16:18:43] ENGINE Bus EXITING
+[09/Jun/2021:16:18:43] ENGINE Bus EXITED
+[09/Jun/2021:16:18:43] ENGINE Waiting for child threads to terminate...
+[09/Jun/2021:16:18:43] ENGINE Re-spawning C:\Users\Administrator\AppData\Local\Programs\Python\Python37\python.exe serve.py
+[09/Jun/2021:16:18:44] ENGINE Bus STARTING
+[09/Jun/2021:16:18:44] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:18:44] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:18:44] ENGINE Bus STARTED
+[09/Jun/2021:16:18:44]  Server running at http://10.93.101.35:80 with pid 688. Kill this process to shut down server.
+[09/Jun/2021:16:31:25] ENGINE Bus STARTING
+[09/Jun/2021:16:31:25] ENGINE Started monitor thread 'Autoreloader'.
+[09/Jun/2021:16:31:26] ENGINE Serving on http://10.93.101.35
+[09/Jun/2021:16:31:26] ENGINE Bus STARTED
+[09/Jun/2021:16:31:26]  Server running at http://10.93.101.35:80 with pid 3936. Kill this process to shut down server.
+[17/Jun/2021:10:08:47] ENGINE Bus STARTING
+[17/Jun/2021:10:08:47] ENGINE Started monitor thread 'Autoreloader'.
+[17/Jun/2021:10:08:48] ENGINE Serving on http://10.93.101.35
+[17/Jun/2021:10:08:48] ENGINE Bus STARTED
+[17/Jun/2021:10:08:48]  Server running at http://10.93.101.35:80 with pid 1488. Kill this process to shut down server.
+[18/Jun/2021:15:00:23]  
+
+
+database is locked
+
+
+
+[18/Jun/2021:15:00:24]  
+
+
+
+database is locked
+
+
+
+
+[25/Jun/2021:11:48:16] ENGINE Bus STARTING
+[25/Jun/2021:11:48:16] ENGINE Started monitor thread 'Autoreloader'.
+[25/Jun/2021:11:48:16] ENGINE Serving on http://10.93.101.35
+[25/Jun/2021:11:48:16] ENGINE Bus STARTED
+[25/Jun/2021:11:48:16]  Server running at http://10.93.101.35:80 with pid 1484. Kill this process to shut down server.
+[30/Jun/2021:11:13:53] ENGINE Bus STARTING
+[30/Jun/2021:11:13:53] ENGINE Started monitor thread 'Autoreloader'.
+[30/Jun/2021:11:13:53] ENGINE Serving on http://10.93.101.35
+[30/Jun/2021:11:13:53] ENGINE Bus STARTED
+[30/Jun/2021:11:13:53]  Server running at http://10.93.101.35:80 with pid 4536. Kill this process to shut down server.
+[30/Jun/2021:14:06:01] ENGINE Bus STARTING
+[30/Jun/2021:14:06:01] ENGINE Started monitor thread 'Autoreloader'.
+[30/Jun/2021:14:06:01] ENGINE Serving on http://10.93.101.35
+[30/Jun/2021:14:06:01] ENGINE Bus STARTED
+[30/Jun/2021:14:06:01]  Server running at http://10.93.101.35:80 with pid 1456. Kill this process to shut down server.
+[05/Jul/2021:07:20:09] ENGINE Bus STARTING
+[05/Jul/2021:07:20:09] ENGINE Started monitor thread 'Autoreloader'.
+[05/Jul/2021:07:20:09] ENGINE Serving on http://10.93.101.35
+[05/Jul/2021:07:20:09] ENGINE Bus STARTED
+[05/Jul/2021:07:20:09]  Server running at http://10.93.101.35:80 with pid 1504. Kill this process to shut down server.
+[05/Jul/2021:09:32:29] ENGINE Bus STARTING
+[05/Jul/2021:09:32:29] ENGINE Started monitor thread 'Autoreloader'.
+[05/Jul/2021:09:32:29] ENGINE Serving on http://10.93.101.35
+[05/Jul/2021:09:32:29] ENGINE Bus STARTED
+[05/Jul/2021:09:32:29]  Server running at http://10.93.101.35:80 with pid 1496. Kill this process to shut down server.
+[06/Jul/2021:16:41:34] ENGINE Bus STARTING
+[06/Jul/2021:16:41:34] ENGINE Started monitor thread 'Autoreloader'.
+[06/Jul/2021:16:41:34] ENGINE Serving on http://10.93.101.35
+[06/Jul/2021:16:41:34] ENGINE Bus STARTED
+[06/Jul/2021:16:41:34]  Server running at http://10.93.101.35:80 with pid 1856. Kill this process to shut down server.

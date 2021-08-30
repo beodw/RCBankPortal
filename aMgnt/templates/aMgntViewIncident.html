@@ -1,0 +1,101 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<style type="text/css">.middle{text-align: center;}</style>
+{%endblock AdditionalAssets%}
+{%block content%}
+<div class="container-fluid">
+	<h1 class="ui center aligned icon header">
+		<img class="md-48" src="{%static 'aMgnt/assets/google icons/report_black_48dp.svg' %}"><br>
+	</h1>
+	<h1 class="ui center aligned header">Incident At Branch {{incident.branch}}</h1>
+	<h2 class="ui center aligned header mt-0">Date - {{incident.date|date:'d M, Y.'}}</h2>
+	<h3 class="ui center aligned header mt-0">Time - {{incident.date|date:'H:m:s'}}</h3>
+    <table class="table table-striped">
+    	<tbody>
+    		{%if incident.resolved is not 1 or user.username == 'Admin'%}
+    		<tr style="background-color: white;">	
+	    	    <td>
+	    			<div class="d-flex flex-row-reverse">
+	    				{%if user.username == 'Admin'%}
+	    				<button class='ui label btn-sm mr-1' style='background: #d40606; width:80px; height:27px; color: white;' id='deleteIncidentButton'>Delete</button>
+						{%elif incident.resolved is 0 and user.username != 'Admin'%}
+	     				<button class='ui label btn-sm mr-1' style='background: #0040a6; width:80px; height:27px; color: white;' id='resolveIncidentButton'>Resolve</button>
+						{%elif incident.resolved is 2 and user.username == 'Admin'%}
+						<button class='ui label btn-sm mr-1' style='background: #0040a6; width:80px; height:27px; color: white;' id='resolveIncidentButton'>Resolve</button>
+						{%endif%}
+	      			</div>
+	 			</td>
+    		</tr>
+    		{%endif%}
+    		<tr>
+				<td><h4 class="ui header mt-0 w-100">Reporting Staff - {{incident.reportingStaffName}}</h4></td>
+			</tr>
+			<tr>
+				<td><h4 class="ui header mt-0 w-100 ">Severity - {%if incident.severity is True%}Severe{%else%}Non-severe{%endif%}</h4></td>
+			</tr>
+			<tr>
+				<td><h4 class="ui header mt-0 w-100 ">Status - {%if incident.resolved is 0%}Not Resolved{%elif incident.resolved is 1%}Resolved{%elif incident.resolved is 2%}Forwarded To Supervisor{%endif%}</h4></td>
+			</tr>
+			<tr>
+				<td><h4 class="ui header mt-0 mb-0 w-100 ">Description: {{incident.description}}</h4></td>
+			</tr>
+			{%if incident.resolved is 1%}
+			<tr>
+				<td><h4 class="ui header mt-0 w-100">Steps Take To Resolve: {{incident.resolution}}</h4></td>
+			</tr>
+			{%endif%}
+		</tbody>
+	</table>
+</div>
+<!-- Modal to resolve new incident -->
+<div class="ui modal " id="resolve-incident-modal">
+  <div class="header">
+  	<i class="close icon"></i>
+    Resolve Incident
+  </div>
+  <div class="content">
+  	<form method="POST">
+  	{%csrf_token%}
+	  <label for="resolutionDetails"><h3>Resolution Details:</h3></label>
+	  <textarea name="resolutionDetails" class="form-control" style="min-height: 100px;" placeholder='Type resolution details in here...' required></textarea>
+	  <input type="number" value="{{incident.id}}" name="id" hidden />
+	
+  </div>
+  <div class="actions">
+    <button name="resolutionSubmitButton" class="ui tiny button" style="background-color: #00307d; color: white;" type="submit">Submit</button></form>
+  </div>
+</div>
+<!-- Modal to resolve new incident -->
+<div class="ui modal" id="deleteIncidentModal">
+  <div class="header">
+  	<i class="close icon"></i>
+    Delete Incident
+  </div>
+  <div class="content">
+  	<form id="deleteIncidentForm" method="POST" action="{%url 'aMgntDeleteIncident' %}">
+  	{%csrf_token%}
+  	<p style="color:red;">
+  		<strong>Warning</strong>, the information for this incident cannot be retrieved once it is deleted!
+  	</p>
+  	<label for="adminPassword">Enter Admin Password:</label>
+  	<input type="password" name="adminPassword" class="form-control" required />
+  	<input type='number' value="{{incident.id}}" name="id" required hidden/>
+  </div>
+  <div class="actions">
+    <button name="resolutionSubmitButton" class="ui tiny button" style="background-color: #d40606; color:white;" type="submit">Delete</button></form>
+  </div>
+</div>
+{%endblock content%}
+{%block scripts%} 
+<script type="text/javascript">
+	$('.close').click(()=>{$('.ui.modal').modal('hide');});
+	{%if user.username == 'Admin'%}$('#deleteIncidentButton').click(()=>{$('#deleteIncidentModal').modal('show');});{%endif%}
+	$('#resolveIncidentButton').click(()=>{$('#resolve-incident-modal').modal('show');});
+	if({{success}} == '1'){toastr.success('{{message}}');}
+	else if({{success}} == '0'){toastr.error('{{message}}');}
+	$('#deleteIncidentForm').submit(function(){$('button[name="resolutionSubmitButton"]').addClass('loading');$('button[name="resolutionSubmitButton"]').attr('background-color','');});
+</script>
+{%endblock scripts%}

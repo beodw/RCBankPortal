@@ -1,0 +1,4 @@
+.toast-top-center{top: 100px;}
+#toast-container > .toast-success {background-color: rgb(15, 15, 150);}
+#toast-container > .toast-error {background-color: grey; color:black; zoom:90%; font-weight: bold; font-size: 13.5px;}
+.toast-top-center{position: sticky;top: 10%;}

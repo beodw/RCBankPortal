@@ -1,0 +1,193 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+
+  <meta charset="UTF-8">
+  <title>Rokel Asset Management</title>
+   <link rel="icon" href="{% static 'aMgnt/assets/dist/img/favicon.png' %}" type="image/gif" sizes="20x20">
+
+  <link rel="icon" href="{% static 'aMgnt/assets/dist/img/favicon.png' %}" type="image/gif" sizes="20x20">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+  <link rel="stylesheet" href="{% static 'aMgnt/assets/plugins/login/style.css' %}">
+  <link rel="stylesheet" href="{% static 'aMgnt/assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+    <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font for all text -->
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&display=swap" rel="stylesheet">
+  <!-- Font for logout navbar link -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300&display=swap" rel="stylesheet">
+
+  <style>
+    .loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+  position: relative;
+  left: 50%;
+
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+  </style>
+
+  <style type="text/css">
+
+    .fade-out {
+      opacity: 0;
+  animation: fadeOut ease 5s;
+  -webkit-animation: fadeOut ease 5s;
+  -moz-animation: fadeOut ease 5s;
+  -o-animation: fadeOut ease 5s;
+  -ms-animation: fadeOut ease 5s;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
+@-moz-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
+@-o-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+  }
+}
+
+@-ms-keyframes fadeOut {
+  0% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+}
+  </style>
+</head>
+<body>
+<div class="cont">
+  <div class="demo">
+   
+    <div class="login" style="height: 350px; width: 400px; border: none; border-radius: 7px;" id="login_container">
+       <form method="POST" action="" id='login_form' >
+      <div class="login__check">
+           {% csrf_token %}
+      	<img src="{%static 'aMgnt/assets/logo/RCB.jpg' %}"  width="63" height="63" alt="RCB Logo" style="border-radius: 50px;" > 
+
+      
+    
+        <h4 class="login__text" style="padding-top: 8.3px; font-family: 'Titillium Web', sans-serif;">Rokel Asset Management</h4></div>
+
+      <div class="login__form">
+        <br>
+
+      <div style="font-weight: bold; margin-top: -12px; display:{{error}}; height:37px; border-radius: 2px;" class="alert alert-dark mt-2" >
+  <!-- <button type="button" class="close" data-dismiss="alert">&times;</button> -->
+       <h4 style="font-weight: bold; width: 100% ; display: {{error}}; padding-top: 1px;">  {{message}} </h4> 
+
+      </div>
+
+        <div class="login__row">
+          <svg class="login__icon name svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8" />
+          </svg>
+
+    
+          <input type="text" class="login__input name" name="username" autocomplete="" placeholder="Branch"/>
+        </div>
+        <div class="login__row">
+          <svg class="login__icon pass svg-icon" viewBox="0 0 20 20">
+            <path d="M0,20 20,20 20,8 0,8z M10,13 10,16z M4,8 a6,8 0 0,1 12,0" />
+          </svg>
+          <input type="password" class="login__input pass" name="password" autocomplete="" placeholder="Password"/>
+        </div>
+        <div class="d-flex justify-content-center login_row">
+            <button type="submit" id="login_button" name="login_in" class="btn btn-lg mt-3 mb-5 w-100 text-white" style="height:29%; border-radius:20px; background-color: #024fcc;" >
+              <div class="" id="login_button_text">Log In</div>
+            </button>
+        </div>
+    
+        </form>
+
+  <footer class="main-footer"  style="color: white; ">
+    <h4>Copyright &copy; {{date}},  RCBank.</h4>
+    All rights reserved.
+   
+  </footer>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<!-- partial -->
+  <script src="{% static 'aMgnt/assets/plugins/jquery/jquery.min.js' %}"></script>
+  <script  src="{% static 'aMgnt/assets/plugins/login/script.js' %}"></script>
+  <!-- partial -->
+  <script src="{% static 'aMgnt/assets/plugins/jquery/jquery.min.js' %}"></script>
+  <script  src="{% static 'aMgnt/assets/plugins/login/script.js' %}"></script>
+  <script src="{% static 'aMgnt/assets/plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'aMgnt/assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+
+
+<script>
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
+
+<script>
+  if ('{{error}}' != 'none'){
+    $('#login_container').attr("style", "height: 400px; width: 400px; border: none; border-radius: 7px;")
+  }
+
+</script>
+
+<script>
+  $('#login_form').submit(
+    ()=>{
+      $('#login_button_text').text('')
+      $('#login_button_text').attr('class', 'loader');
+
+    }
+  );
+</script>
+
+</body>
+</html>

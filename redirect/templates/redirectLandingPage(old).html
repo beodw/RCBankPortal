@@ -1,0 +1,112 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<!-- Rokel Icon -->
+  	<link rel="icon" href="{% static 'nMeet/assets/dist/img/favicon.png' %}" type="image/gif" sizes="20x20">
+	<title>Rokel Company Portal</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/themes/Semantic-UI/semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/my_css/semantic-UI-hot-fix.css' %}">
+</head>
+<body style="zoom:87%;">
+	<div class="ui stackable inverted menu">
+		<a class="item" href="">
+		    <img src="{% static 'nMeet/assets/logo/RCB.jpg' %}" style="width: 45px; height: 45px; border-radius:50%;">
+		</a>
+		<span class="item">Rokel Company Portal</span>
+		{%if user.username != "Admin" and user.username != "IT SUPPORT"%}
+		<span class="item">Branch {{user.username}}</span>
+		{%else%}
+		<span class="item">{{user.username}}</span>
+		{%endif%}
+		<div class="right menu">
+			{%if user.username == 'Admin'%}
+				<a class="item" href="{% url 'manage_users' %}">Manage Users</a>
+			{%endif%}
+		    <a class="item" href="{% url 'portaLogout' %}">Logout</a>
+		</div>
+	</div>
+	<div class="ui segments container">
+		<div class="ui very raised segment">
+			<h2 class="ui center aligned header">Select Section</h2>
+		</div>
+	</div>
+	<div class="ui segments container">
+		<div class="ui yellow segment">
+			<div class="ui three column grid">
+				<div class="row">
+					<div class="column"></div>
+					<div class="column">
+						<div class="ui center aligned icon header">
+							<i class="app store icon"></i>
+							    Asset Management
+						</div>
+						<div class="ui three column grid">
+							<div class="row">
+								<div class="column"></div>
+								<div class="column">
+									<a href="{%url 'view_all_assets'%}"><div style="background-color: #00378f; color: white;" class="ui tiny  button">Open app</div></a>
+								</div>
+								<div class="column"></div>
+							</div>
+						</div>
+					</div>
+					<div class="column"></div>
+				</div>
+			</div>
+		</div>
+		<div class="ui yellow segment">
+			<div class="ui three column grid">
+				<div class="row">
+					<div class="column"></div>
+					<div class="column">
+						<div class="ui center aligned icon header">
+							<i class="app store icon"></i>
+							    End Of Day Processing
+						</div>
+						<div class="ui three column grid">
+							<div class="row">
+								<div class="column"></div>
+								<div class="column">
+									<a href="{%url 'nMeetDashboard'%}"><div style="background-color: #00378f; color: white;" class="ui tiny button">Open app</div></a>
+								</div>
+								<div class="column"></div>
+							</div>
+						</div>
+					</div>
+					<div class="column"></div>
+				</div>
+			</div>
+		</div>
+		{% if user.username == 'IT SUPPORT' or user.username == 'Admin' %}
+			<div class="ui yellow segment">
+				<div class="ui three column grid">
+					<div class="row">
+						<div class="column"></div>
+						<div class="column">
+							<div class="ui center aligned icon header">
+								<i class="app store icon"></i>
+								    Statements Inventory
+							</div>
+							<div class="ui three column grid">
+								<div class="row">
+									<div class="column"></div>
+									<div class="column">
+										<a href="{% url 'sMntDashboard' %}"><div style="background-color: #00307d; color: white;" class="ui tiny button">Open app</div></a>
+									</div>
+									<div class="column"></div>
+								</div>
+							</div>
+						</div>
+						<div class="column"></div>
+					</div>
+				</div>
+			</div>
+		{%endif%}
+	</div>
+<script src="{% static 'aMgnt/assets/plugins/jquery/jquery.min.js' %}"></script>
+<script type="text/javascript">$(".ui.button").click(function(){$(this).text('Opening...'); $(this).removeClass('primary'); $(this).attr('disabled',''); });</script>
+</body>
+</html>

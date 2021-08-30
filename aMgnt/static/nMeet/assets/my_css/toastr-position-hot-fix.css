@@ -1,0 +1,15 @@
+.toast-top-center { 
+    top: 100px; 
+}
+
+
+#toast-container > .toast-success {
+  background-color: #003ce0;
+  
+}
+
+.toast-top-center{
+  position: sticky;
+  top: 9%;
+
+}

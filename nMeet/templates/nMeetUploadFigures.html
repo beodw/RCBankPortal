@@ -1,0 +1,71 @@
+{% extends "nMeetBase.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+  body{ overflow-y: scroll; }
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+<div class='container-fluid'>
+	<h1>Upload Figures</h1>
+	<hr class="mt-1">
+	<h2 class="ui center aligned icon header">
+	  <i class="upload icon"></i>
+	  <span>Select A File</span>
+	</h2>
+	<br>
+	<div class="ui three column grid mb-5">
+		<div class="col"></div>
+		<div class="col">
+				<div class="ui three column grid">
+					<div class="col"></div>
+			<div class="col mt-2">
+				<form id="uploadFiguresForm" method="post" enctype="multipart/form-data">
+					{%csrf_token%}
+					{{fileForm}}
+					<div class="mt-3 ui three column grid">
+						<div class="col"></div>
+						<div class="col">
+							<button type="submit" class="ml-1 ui tiny blue button" id="upload-button">Upload</button>
+						</div>
+						<div class="col"></div>
+					</div>
+				</form>
+			</div>
+			<div class="col"></div>
+		</div>
+		</div>
+		<div class="col"></div>
+	</div>
+</div>
+
+<div class="ui basic modal">
+  <div class="ui icon header">
+    You must first select a file to upload.
+  </div>
+</div>
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+	{%if success%}
+	toastr.success('{{message}}')
+	{%elif error%}
+	toastr.error('{{message}}')
+	{%endif%}
+	//position file input widget properly and remove required attr.
+	$('#id_file').attr('class','ml-5')
+	$('#id_file').attr('accept','text/plain')
+	$('#id_file').removeAttr('required')
+	//Remove file input label.
+	$('label[for="id_file"]').remove()
+	//Check if a file has been selected.
+	$('#uploadFiguresForm').submit((e)=>{ if($('#id_file').val()==''){$('.ui.basic.modal').modal('show'); e.preventDefault();}else{$('#upload-button').attr('class','ml-1 ui tiny button'); $('#upload-button').text('Uploading...');}});
+</script>
+{%endblock scripts%}
+

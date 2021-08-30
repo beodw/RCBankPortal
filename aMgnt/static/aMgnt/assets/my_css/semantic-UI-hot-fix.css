@@ -1,0 +1,17 @@
+.dimmed.dimmable > .ui.animating.dimmer, .dimmed.dimmable > .ui.visible.dimmer, .ui.active.dimmer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.5);
+  overflow-y: auto;
+}
+.ui.modal,
+.ui.active.modal {
+  margin: 0 auto!important;
+  top: 20% !important;
+  left: auto !important;
+  height: auto !important;
+  transform-origin: center !important;
+  transition: all ease .5s;
+  overflow-y: auto;
+}

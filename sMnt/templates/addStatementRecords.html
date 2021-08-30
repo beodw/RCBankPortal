@@ -1,0 +1,61 @@
+{% extends "sMntBase.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+  body{ overflow-y: scroll; }
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+<div class='container-fluid'>
+	<h1>Add Statement Records</h1>
+	<hr>
+	<div class="ui segments container" style="width: 25% !important;">
+		<div class="ui segment">
+			<form id="addStatementsRecordForm" method="POST" action='{%url "sMntAddRecord"%}'>
+				{%csrf_token%}
+				<div class="row"> 
+					<label for="branch">Branch</label>
+			        <input type="text" name="branch" class="form-control" required />
+			        <label for="customer_name">Customer Name</label>
+			        <input type="text" name="customer_name" class="form-control" required />
+			        <label for="account_no"> Account No</label>
+			        <input type="number" name="account_no" class="form-control" required />
+			        <label for="initial_serial_number">Initial Serial Number</label>
+			        <input type="number" name="initial_serial_number" class="form-control" required />
+			        <label for="final_serial_number">Final Serial Number</label>
+			        <input type="number" name="final_serial_number" class="form-control" required />
+			        <label for="date">Date</label>
+			        <input type="date" name="date" required class="form-control" />
+			    </div>
+		         <button type="submit" id="submit" class="ui tiny blue button mt-2 ml-0">Submit</button>		
+			</form>
+		</div>
+	</div>
+	<hr>
+	<h1>Cancelled Statements</h1>
+
+</div>
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+	$('#input-figures-form').submit(
+		(e)=>{
+			$('#submit').attr('disabled','');
+			$('#submit').removeClass('blue');
+			$('#submit').text('Submitting...');
+		}
+	);
+{%if success%}
+	toastr.success('{{message}}')
+{%elif error%}
+	toastr.error('Error', '{{message}}')
+{%endif%}
+</script>
+{%endblock scripts%}
+

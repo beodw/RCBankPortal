@@ -1,0 +1,83 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<!-- Rokel Icon -->
+  	<link rel="icon" href="{% static 'nMeet/assets/dist/img/favicon.png' %}" type="image/gif" sizes="20x20">
+	<title>Rokel Company Portal</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/themes/Semantic-UI/semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'nMeet/assets/my_css/semantic-UI-hot-fix.css' %}">
+    <style type="text/css">
+	    .wide{position:relative!important; top:20%!important; margin-left:auto!important; margin-right: auto!important; max-width: 80%!important;}
+	    	@media only screen and (max-width:768px) {.wide{max-width: 100%!important;} }
+		.open:hover{
+		  	border: 1px solid #1f62bf;
+   			box-shadow: 0 0 5px #00307d;
+    		outline: none; 
+    	}
+    </style>
+</head>
+<body style="zoom:87%;">
+	<div class="ui stackable inverted menu">
+		<a class="item" href="">
+		    <img src="{% static 'nMeet/assets/logo/RCB.jpg' %}" style="width: 45px; height: 45px; border-radius:50%;">
+		</a>
+		<span class="item">Rokel Company Portal</span>
+		{%if user.username != "Admin" and user.username != "IT SUPPORT"%}
+		<span class="item">Branch {{user.username}}</span>
+		{%else%}
+		<span class="item">{{user.username}}</span>
+		{%endif%}
+		<div class="right menu">
+			{%if user.username == 'Admin'%}
+				<a class="item" href="{% url 'manage_users' %}">Manage Users</a>
+			{%endif%}
+		    <a class="item" href="{% url 'portaLogout' %}">Logout</a>
+		</div>
+	</div>
+	<div class="ui two column grid wide">
+		<div class="column">
+			<div class="ui segment open">
+				<div class="ui center aligned icon header ">
+				<a href="{%url 'view_all_assets'%}"></a>
+				<i class="app store icon"></i>
+				Asset<br> Management
+				</div>
+			</div>
+		</div>
+		<div class="column">
+			<div class="ui segment open">
+				<div class="ui center aligned icon header">
+				<a href="{%url 'nMeetDashboard'%}"></a>
+				<i class="app store icon"></i>
+				End Of Day<br> Processing
+				</div>
+			</div>
+		</div>
+	</div>
+	{%if user.username == "IT SUPPORT" or user.username == "Admin"%}
+	<div style="width:50%; position:relative;top:150px; margin-left: auto; margin-right: auto;" class="ui one column grid">
+		<div class="column">
+			<div class="ui segment open">
+				<div class="ui center aligned icon header">
+				<a href="{% url 'sMntDashboard' %}" ></a>
+				<i class="app store icon"></i>
+				Statements<br> Inventory
+				</div>
+			</div>
+		</div>
+	</div>
+	{%endif%}
+	<h2 style="position:relative; bottom:0px; top:53%;" class="ui dividing header"></h2>
+	<footer style="position:absolute; bottom:0px; top:90%; text-align: center; width: 100%;">
+	    Copyright &copy; 
+	              {{date}}
+	             RCBank.
+	    All rights reserved.
+	</footer>
+<script src="{% static 'aMgnt/assets/plugins/jquery/jquery.min.js' %}"></script>
+<script type="text/javascript">$(".ui.button").click(function(){$(this).text('Opening...'); $(this).removeClass('primary'); $(this).attr('disabled',''); });$('.open').click(function(){$(this).children().children('a')[0].click();});</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends "sMntBase.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+  body{ overflow-y: scroll; }
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+<div class='container-fluid'>
+	<h1>Delete Statement</h1>
+	<hr class="mt-1">
+	<h2 class="ui center aligned icon header">
+	  <i class=" window close outline icon"></i>
+	  <!--span>Cancel A Statement</span-->
+	</h2>
+	<br>
+	<div class="ui three column grid mb-5">
+		<div class="col"></div>
+		<div class="col">
+		   <div class="ui three column grid">
+			<div class="col"></div>
+			<div class="col mt-2">
+				<form id="delSMntForm" method="POST">
+					{%csrf_token%}
+					<div class="mt-3 ui three column grid" style="width:720px;">
+						<div class="col"></div>
+						<div class="col">
+							<label for="sMntType">Select statement type:</label>
+							<select name="sMntType" type class="form-control" required>
+								<option selected value="">--Select a statement type--</option>
+								<option value="printed_sMnt">Printed Statement(s)</option>
+								<option value="cancelled_sMnt">Cancelled Statement(s)</option>
+							</select>
+							<label for="initial_serial_number" class="mt-2">Initial Serial number</label>
+							<input type="number" name="initial_serial_number" class="form-control" required/>
+							<label for="final_serial_number" class="mt-2">Final Serial number:</label>
+							<input name="final_serial_number" type="number" class="form-control" required/>
+							<button type="submit" class="ml-1 mt-2 ui tiny button row" id="upload-button" style="background-color: #c70000; color:white;">Delete</button>
+						</div>
+						<div class="col"></div>
+					</div>
+				</form>
+			</div>
+			<div class="col"></div>
+		</div>
+		</div>
+		<div class="col"></div>
+	</div>
+</div>
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+	$('select[name="sMntType"]').on('change', function(){$(this).children(':contains(--Select a statement type--)').remove();});
+	if({{status}}=='1'){toastr.success('{{message}}','Success');}
+	else{
+		if({{status}}=='-1'){toastr.error('{{message}}','Error');}
+	}
+</script>
+{%endblock scripts%}
+

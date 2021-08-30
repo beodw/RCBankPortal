@@ -1,0 +1,1067 @@
+{%extends "AdminBase.html"%}
+{%load static %}
+
+{%block AdditionalAssets%} 
+{%if branch_name == 'Admin'%}
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<!-- Resolve positioning conflict between bootsrap modal and semancit ui modal classes -->
+<style>
+#toast-container > .toast-success {
+  background-color: #003ce0;
+  
+}
+</style>
+
+<!-- Position tostr below navbar -->
+<style>
+.toast-top-center { 
+    top: 100px; 
+}
+</style>
+<style type="text/css">
+	@import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
+@import url(https://fonts.googleapis.com/css?family=Pacifico);
+/*
+* {
+	font-size: 16px;
+}*/
+
+input:focus,
+button:focus {
+	outline: none;
+}
+
+button:hover,
+.reset:hover {
+	opacity: .8;
+}
+
+button:active,
+.reset:active {
+	opacity: .5;
+}
+
+.container {
+	width: 50%;
+	position: relative;
+	top: 50%;
+	/*left: 50%;*/
+	/*-webkit-transform: translate(-50%, -50%);*/
+	/*-ms-transform: translate(-50%, -50%);*/
+	/*transform: translate(-50%, -50%);*/
+}
+
+.steps {
+	margin-bottom: 10px;
+	position: relative;
+	height: 25px;
+}
+
+.steps > div {
+	position: relative;
+	top: 0;
+	-webkit-transform: translate(-50%);
+	-ms-transform: translate(-50%);
+	transform: translate(-50%);
+	height: 25px;
+	padding: 0 5px;;
+	display: inline-block;
+	width: 80px;
+	text-align: center;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+}
+
+.steps > div > span {
+	line-height: 25px;
+	height: 25px;
+	margin: 0;
+	color: #777;
+	font-family: 'Roboto', sans-serif;
+	font-size: .9rem;
+	font-weight: 300;
+}
+
+.steps > div > .liner {
+	position: relative;
+	height: 2px;
+	width: 0%;
+	left: 0;
+	top: 50%;
+	margin-top: -1px;
+	background: #999;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+}
+
+.step-one {
+	left: 0;
+}
+
+.step-two {
+	left: 50%;
+	clip: rect(0, 0px, 25px, 0px);
+}
+
+.step-three {
+	left: 100%;
+	clip: rect(0, 0px, 25px, 0px);
+}
+
+.line {
+	width: 100%;
+	height: 5px;
+	background: #ddd;
+	position: relative;
+	border-radius: 10px;
+	overflow: visible;
+	margin-bottom: 50px;
+}
+
+.line .dot-move {
+	position: relative;
+	top: 50%;
+	left: 0%;
+	width: 15px;
+	height: 15px;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	background: #ddd;
+	border-radius: 50%;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+}
+
+.line .dot {
+	position: relative;
+	top: 50%;
+	width: 15px;
+	height: 15px;
+	left: 0;
+	background: #ddd;
+	border-radius: 50%;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+	-webkit-transform: translate(-50%, -50%) scale(.5);
+	-ms-transform: translate(-50%, -50%) scale(.5);
+	transform: translate(-50%, -50%) scale(.5);
+}
+
+.line .dot.zero {
+	left: 0%;
+	background: #bbb;
+}
+
+.container.slider-one-active .dot.zero {
+	background: #5892fc;
+}
+
+.line .dot.center {
+	left: 50%;
+	background: #bbb
+}
+
+.line .dot.full {
+	left: 100%;
+	background: #bbb
+}
+
+.slider-ctr {
+	width: 100%;
+	overflow: hidden;
+}
+
+.slider {
+	overflow: hidden;
+	width: 1200px;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+	-webkit-transform: translate(0px) scale(1);
+	-ms-transform: translate(0px) scale(1);
+	transform: translate(0px) scale(1);
+}
+
+.container.slider-one-active .slider-two,
+.container.slider-one-active .slider-three {
+	-webkit-transform: scale(.5);
+	-ms-transform: scale(.5);
+	transform: scale(.5);
+}
+
+.container.slider-two-active .slider-one,
+.container.slider-two-active .slider-three {
+	-webkit-transform: scale(.5);
+	-ms-transform: scale(.5);
+	transform: scale(.5);
+}
+
+.container.slider-three-active .slider-one,
+.container.slider-three-active .slider-two {
+	-webkit-transform: scale(.5);
+	-ms-transform: scale(.5);
+	transform: scale(.5);
+}
+
+.slider-one,
+.slider-two,
+.slider-three {
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+}
+
+.slider-form {
+	float: left;
+	width: 400px;
+	text-align: center;
+}
+
+.slider-form h2 {
+	font-size: 1.5rem;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	margin-bottom: 50px;
+	color: #999;
+	position: relative;
+}
+
+.slider-form h2 .yourname {
+	font-weight: 400;
+}
+
+.slider-form h3 {
+	font-size: 1.5rem;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	margin-bottom: 50px;
+	line-height: 1.5;
+	color: #999;
+	position: relative;
+}
+
+.slider-form h3 .balapa {
+	font-family: 'Pacifico', sans-serif;
+	display: inline-block;
+	color: #5892fc;
+	text-decoration: none
+}
+
+.slider-form [type="text"] {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 15px 20px;
+	background: #fafafa;
+	border: 1px solid transparent;
+	color: #777;
+	border-radius: 50px;
+	margin-bottom: 50px;
+	font-size: 1rem;
+	font-family: 'Roboto', sans-serif;
+	position: relative;
+	z-index: 99;
+}
+
+.slider-form [type="text"]:focus {
+	background: #fcfcfc;
+	border: 1px solid #ddd;
+}
+
+.slider-form button,
+.reset {
+  display: inline-block;
+  text-decoration: none;
+	background: #5892fc;
+	border: none;
+	color: white;
+	padding: 10px 25px;
+	font-size: 1rem;
+	border-radius: 3px;
+	cursor: pointer;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	position: relative;
+}
+
+/*  emot */
+
+.label-ctr {
+	margin-bottom: 50px;
+}
+
+label.radio {
+	height: 55px;
+	width: 55px;
+	display: inline-block;
+	margin: 0 10px;
+	background: transparent;
+	position: relative;
+	border-radius: 50%;
+	cursor: pointer
+}
+
+label.radio input {
+	visibility: hidden
+}
+
+label.radio input:checked + .emot {
+	-webkit-transform: scale(1.25);
+	-ms-transform: scale(1.25);
+	transform: scale(1.25);
+}
+
+label.radio input:checked + .emot,
+label.radio input:checked + .emot .mouth {
+	border-color: #5892fc;
+}
+
+label.radio input:checked + .emot:before,
+label.radio input:checked + .emot:after {
+	background: #5892fc;
+}
+
+label.radio .emot {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #fafafa;
+	border-radius: 50%;
+	border: 2px solid #ddd;
+	-webkit-transition: .3s all ease;
+	transition: .3s all ease;
+}
+
+label.radio .emot:before {
+	content: "";
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	width: 5px;
+	height: 10px;
+	background: #ddd;
+}
+
+label.radio .emot:after {
+	content: "";
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	width: 5px;
+	height: 10px;
+	background: #ddd;
+}
+
+label.radio .emot .mouth {
+	position: absolute;
+	bottom: 10px;
+	right: 15px;
+	left: 15px;
+	height: 15px;
+	border-radius: 50%;
+	border: 3px solid #ddd;
+	background: transparent;
+	clip: rect(0, 35px, 10px, 0);
+}
+
+label.radio .emot .mouth.smile {
+	-webkit-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+label.radio .emot .mouth.sad {
+	-webkit-transform: translateY(50%);
+	-ms-transform: translateY(50%);
+	transform: translateY(50%);
+}
+
+/*	center */
+
+.container.center .line .dot-move {
+	left: 50%;
+	-webkit-animation: .3s anim 1;
+}
+
+.container.center .line .dot.center {
+	background: #5892fc;
+}
+
+.container.center .slider {
+	-webkit-transform: translate(-400px);
+	-ms-transform: translate(-400px);
+	transform: translate(-400px);
+}
+
+.container.center .step-two {
+	clip: rect(0, 100px, 25px, 0px);
+}
+
+.container.center .step-one .liner {
+	width: 100%;
+}
+
+/*	full */
+
+.container.full .line .dot-move {
+	left: 100%;
+	-webkit-animation: .3s anim 1;
+}
+
+.container.full .line .dot.full {
+	background: #5892fc;
+}
+
+.container.full .slider {
+	-webkit-transform: translate(-800px);
+	-ms-transform: translate(-800px);
+	transform: translate(-800px);
+}
+
+.container.full .step-two,
+.container.full .step-three {
+	clip: rect(0, 100px, 25px, 0px);
+}
+
+.container.full .step-one .liner,
+.container.full .step-two .liner {
+	width: 100%;
+}
+</style>
+{%endif%}
+{%endblock AdditionalAssets%}
+
+{%block content%}
+<div class='container-fluid'>
+	<h2 class="ui center aligned icon header">
+	  <i class="circular users icon"></i>
+	  Manage Users
+	</h2>
+	<br>
+	<div class="row">
+		<div class="col">
+			<div class="ui left pointing dropdown icon button">
+			  <i class="cog icon"></i>
+			  <div class="menu">
+			    <div id="view-email-notifications-list-option" class="item">
+			     <i class="ui envelope icon"></i>
+			      View Email Notifications List
+			    </div>
+			    <div id="change-admin-password-option" class="item">
+			      <i class="ui key icon"></i>
+			      Change Admin Password
+			    </div>
+			  </div>
+			</div>
+		</div>
+		<div class="col-auto">
+			<button class="btn btn-sm mr-1 btn-warning" id="reset_password_button">New Password</button>
+			<button  class='btn btn-sm float-right mr-1' style="background-color: #00307d; color: white;" id="add_branch_button">Add Branch</button>
+			<button class='btn btn-sm float-right mr-1' style='background-color: #c70202; color: white;' id="delete_branch_button">Delete Branch</button>
+		</div>
+
+	</div>
+
+	<div class="row p-2">
+		  <table id="example1"  class="table table-bordered table-sm table-hover table-condensed">
+		    <thead class="thead-light">
+		      <tr>
+		        <th>Branch Name</th>
+		        <th>Status</th>  
+		      </tr>
+		    </thead>
+		    <tbody>
+		      {%for user in users%}
+		        <tr id='{{user.name}}' name='table_row'>
+		          <td>{{user.name}}</td> <td>{% if user.is_active is True %}Active{%else%}Deactivated{%endif%}</td>
+		        </tr>
+		      {%empty%}
+		          <tr>
+		          <td colspan="6">No Users Added</td>
+		          </tr>
+		      {%endfor%}
+		    </tbody>
+		  </table>
+	</div>
+</div>
+
+<!-- Modal input form to reset branch password -->
+<div id="reset_password_modal" class="ui small modal">
+	<div class="header">
+		<div class="row">
+			<div class="col">
+				<h4>New Password</h4>
+			</div>
+			<div class="col-sm-auto col-xs-auto col-lg-auto col-md-auto">
+				<h6><label style='color: red;' id='report_branch_password_error'></label></h6>
+			</div>
+			<div class="col">
+			</div>
+		</div>
+
+	</div>
+	<div class="content">
+	<form id="reset_password_form" method="POST">
+		{%csrf_token%}
+			<div class="description">
+				<label for="new_branch_password">Enter new password:</label>
+				<input type="password" name="new_branch_password" id="new_branch_password" class="form-control" minlength="8">
+				<label for="admin_password">Enter admin password:</label>
+				<input type="password" name="admin_password" class="form-control" id="admin_password_for_reset" minlength="8">
+				<input type="text" hidden name="purpose" value="reset_password">
+				<div id="selected_rows" hidden>
+					
+				</div>
+			</div>
+		</div>
+		<div class="actions">
+			<button id="reset_password_form_submit_button" type="submit" class="ui button bg-warning" style='/*background-color: #003ce0; color: white;*/ width: auto !important;'>
+				Submit New Password
+			</button>
+		</div>
+	</form>
+</div>
+
+<!-- Modal input form to add new branch -->
+<div id="add_data_Modal" class="ui small modal">
+	<div class="header">
+		<div class="row">
+			<div class="col">
+				<h4>Add Branch</h4>
+			</div>
+			<div class="col-sm-auto col-xs-auto col-lg-auto col-md-auto">
+				<h6><label style='color: red;' id='report_password_error'></label></h6>
+			</div>
+			<div class="col">
+			</div>
+		</div>
+
+	</div>
+	<div class="content">
+	<form id="add_new_branch_form" method="POST">
+		{%csrf_token%}
+			<div class="description">
+				{{add_branch_form}}
+				<input type="text" hidden name="purpose" value="add_branch">
+			</div>
+		</div>
+		<div class="actions">
+			<button type="submit" id="add_data_Modal_submit_button" class="ui button" style='background-color: #003ce0; color: white; width: auto !important;'>
+				Add Branch
+			</button>
+		</div>
+	</form>
+</div>
+
+<!-- Modal input form to de-activate a branch -->
+<div id="delete_data_Modal" class="ui small modal">  
+	    <div class="header"> 
+	    	<div class="row">
+	    		<div class="col">
+				    <h4>Deactivate Branch User(s)</h4>
+				</div>
+				<div class="col-auto">
+			    	<h5> <p id='delete_user_form_error' class="text-danger"></p></h5>
+			    </div>
+			    <div class="col">
+				</div>
+		    </div>  
+	    </div>
+        <div class="content"> 
+	        <div class="description"> 
+		            <form method="post" id="delete_branch_form"> 
+		         	{%csrf_token%}
+				              <p>
+				              	<h6 class="text-danger">
+				              		<strong>You are about to de-activate branch user(s).</strong> All corresponding supplies, assets, replacements and incidents will be no longer accessible!
+				              	</h6>
+				              </p>
+				               <label for="password">Enter admin password to continue.</label>
+		                       <input type="password" id='delete_branch_confirmation_input' name="admin_password" class="form-control" required>
+		                       <input value="delete_branch" type="text" hidden name="purpose"/> 
+		                       <div id='branches_to_delete' hidden>
+		                       	
+		                       </div>
+		            </form> 
+		    </div>  
+        </div>
+        <div class="actions">  
+                 <button type="button" id='confirm_delete_branch_button' class="ui button bg-danger mb-1">Continue</button> 
+		</div>   
+</div>  
+
+<div class="ui modal" id="view-mail-list-modal" >
+	<div class="row d-flex flex-row-reverse mt-3">
+				<button tabindex="-1" class="ui icon button modalCloser" style="background-color: rgba(127.5,127.5,127.5,0.1);border-radius: 50%;margin-right:30px; ">
+				 <i class="x icon modalCloser"></i>
+				</button>
+	</div>
+  <div class="image content">
+    <div class="description">
+    	<div style="margin: auto; width:80%;">
+    		<input hidden type="number" name="message_id">
+    		<div style="margin:auto; width:50%;" class="d-flex justify-content-center">
+    			<h1 style="font-family: serif;font-weight: bold;">Email Notifications List</h1>
+    		</div>
+    		<hr>
+    		<div class="deleteModalMessage d-flex justify-content-center" style="margin:auto;">
+				  <h3 style="color:red; font-weight: bold;">
+	    				Warning: The dashboard holds all the figures for every branch.
+	    		</h3>
+				</div>
+				 <div class="deleteModalMessage d-flex justify-content-center" style="margin:auto; "> 
+					 	<h3 style="color:red; font-weight: bold;">Once it is cleared this action <em>cannot</em> be undone!
+					 	</h3> 
+				 </div>
+				  
+    	</div>
+    </div>
+  </div>	    	
+  <form method="post" id="clear-dashboard-form" action="{% url 'nMeetClearDashboard' %}">
+	  <div class="d-flex justify-content-center mb-5" style="padding: 0px 0px 15px 0px; ">
+	    <div hidden="hidden" id="clear-dashboard-enter-password" class="d-flex justify-content-center p-1" style="width:50%; background-color:white; border-style:solid; border-width:2px; border-color: rgba(0,0,255,0.55);" >
+		    	{%csrf_token%} 
+		    	<input autofocus id="admin-password-input" placeholder="Enter Admin password" class="h-100" style="padding-left:5px;border-radius: 30px; width: 70%;display: inline-block;border:none; outline-width: 0;" type="password" name='admin_password' required minlength="8" />
+		    				
+				  <button type="submit" class="btn" style="height: 42.5px;background: linear-gradient(0.35turn, #369dc9, #e8a864); border-color: white; margin: 0px 0px 0px 10px; width: 30%;display: inline-block; color:white; ">
+				  	<span>Submit</span>
+				  </button>
+	    </div>
+	  </div>
+</form>
+</div>
+
+<div class="ui modal" id="change-admin-password-modal" >
+	<div class="row d-flex flex-row-reverse mt-3">
+				<button tabindex="-1" class="ui icon button modalCloser" style="background-color: rgba(127.5,127.5,127.5,0.1);border-radius: 50%;margin-right:30px; ">
+				 <i class="x icon modalCloser"></i>
+				</button>
+	</div>
+
+  <div class="image content">
+    <div class="description">
+    	<div style="margin: auto; width:80%;">
+    		<input hidden type="number" name="message_id">
+    		<div style="margin:auto; width:50%;" class="d-flex justify-content-center">
+    			<h1 style="font-family: serif;font-weight: bold;">Change Password</h1>
+    		</div>
+    		<hr>
+    		<!-- <div class="deleteModalMessage d-flex justify-content-center" style="margin:auto;">
+				  <h3 style="color:red; font-weight: bold;">
+	    				Warning: The dashboard holds all the figures for every branch.
+	    		</h3>
+				</div>
+				 <div class="deleteModalMessage d-flex justify-content-center" style="margin:auto; "> 
+					 	<h3 style="color:red; font-weight: bold;">Once it is cleared this action <em>cannot</em> be undone!
+					 	</h3> 
+				 </div> -->
+				  
+    	</div>
+    </div>
+  </div>	    	
+  <form method="post" id="" action="">
+	 <div class="d-flex justify-content-center " style="padding: 0px 0px 15px 0px; ">
+			<div class="container slider-one-active">
+			  <div class="steps">
+			    <div class="step step-one">
+			      <div class="liner"></div>
+			      <span>Old Password</span>
+			    </div>
+			    <div class="step step-two">
+			      <div class="liner"></div>
+			      <span>New Password</span>
+			    </div>
+			    <div class="step step-three">
+			      <div class="liner"></div>
+			      <span>Repeat New Password</span>
+			    </div>
+			  </div>
+			  <div class="line">
+			    <div class="dot-move"></div>
+			    <div class="dot zero"></div>
+			    <div class="dot center"></div>
+			    <div class="dot full"></div>
+			  </div>
+			  <div class="slider-ctr">
+			    <div class="slider">
+			      <div class="slider-form slider-one">
+			        <h2>Step Form Design Experience</h2>
+			        <label class="input">
+			          <input type="text" class="name" placeholder="What's your name?">
+			        </label>
+			        <button type="button" class="first next">Next Step</button>
+			      </div>
+			      <div class="slider-form slider-two">
+			        <h2>Are you happy with our service?</h2>
+			        <div class="label-ctr">
+			          <label class="radio">
+			            <input type="radio" value="happy" name="condition">
+			            <div class="emot happy">
+			              <div class="mouth sad"></div>
+			            </div>
+			          </label>
+			          <label class="radio">
+			            <input type="radio" value="happy" name="condition">
+			            <div class="emot happy">
+			              <div class="mouth smile"></div>
+			            </div>
+			          </label>
+			        </div>
+			        <button class="second next">Next Step</button>
+			      </div>
+			      <div class="slider-form slider-three">
+			        <h2>Hello, <span class="yourname"></span></h2>
+			        <h3>Thank you for your input!
+								</h3>
+			        <a class="reset" href="https://codepen.io/balapa/pen/XbXVRg" target="_blank">Reset</a>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	  <!-- div class="d-flex justify-content-center " style="padding: 0px 0px 15px 0px; ">
+	    <div hidden="hidden" id="old-admin-password-conatiner" class="d-flex justify-content-center p-1" style="height: 42.5px;width:50%; background-color:white; border-radius: 30px; border-style:solid; border-width:2px; border-color: rgba(0,0,255,0.55);" >
+		    	<input autofocus id="old-admin-password-input" placeholder="Enter old admin password" class="h-100" style="padding-left:5px;border-radius: 30px;width: 100%;display: inline-block;border:none; outline-width: 0;" type="password" name='admin_password' required minlength="8" />
+	    </div>
+	  </div> -->
+	 <!--  <div class="d-flex justify-content-center " style="padding: 0px 0px 15px 0px; ">
+	    <div hidden="hidden" id="new-admin-password-container" class="d-flex justify-content-center p-1" style="height: 42.5px;width:50%; background-color:white; border-style:solid; border-width:2px; border-color: rgba(0,0,255,0.55);" >
+		    	<input autofocus id="new-admin-password-input" placeholder="Enter new admin password" class="h-100" style="padding-left:5px;border-radius: 30px;width: 100%;display: inline-block;border:none; outline-width: 0;" type="password" name='admin_password' required minlength="8" />
+	    </div>
+	  </div> -->
+	<!--   <div class="d-flex justify-content-center" style="padding: 0px 0px 15px 0px; ">
+	    <div hidden="hidden" id="repeat-new-admin-password-container" class="d-flex justify-content-center p-1" style="height: 42.5px;width:50%; background-color:white; border-style:solid; border-width:2px; border-color: rgba(0,0,255,0.55);" >
+		    	<input autofocus id="repeat-new-admin-password-input" placeholder="Repeat new admin password" class="h-100" style="padding-left:5px;border-radius: 30px;width: 100%;display: inline-block;border:none; outline-width: 0;" type="password" name='admin_password' required minlength="8" />
+	    </div>
+	  </div> -->
+	  <div class="d-flex justify-content-center mb-5" style="padding: 0px 0px 15px 0px; ">
+	    <div hidden="hidden" id="repeat-new-admin-password-container" class="d-flex justify-content-center" style="height: 42.5px;width:50%; background-color:white; border-style:none;" >
+		    	<button type="submit" class="btn" style="height: 42.5px;background: linear-gradient(0.35turn, #369dc9, #e8a864); border-radius: 30px; border-color: white; width: 30%;display: inline-block; color:white; ">
+				  	<span>Next</span>
+				  </button>
+	    </div>
+	  </div>
+</form>
+</div>
+{%endblock content%}
+
+{%block scripts%}
+<script type="text/javascript">
+	var $firstButton = $(".first"),
+  $secondButton = $(".second"),
+  $input = $("input"),
+  $name = $(".name"),
+  $more = $(".more"),
+  $yourname = $(".yourname"),
+  $reset = $(".reset"),
+  $ctr = $(".container");
+
+$firstButton.on("click", function(e){
+  $(this).text("Saving...").delay(10).queue(function(){
+    $ctr.addClass("center slider-two-active").removeClass("full slider-one-active");
+  });
+  e.preventDefault();
+});
+
+$secondButton.on("click", function(e){
+  $(this).text("Saving...").delay(900).queue(function(){
+    $ctr.addClass("full slider-three-active").removeClass("center slider-two-active slider-one-active");
+    $name = $name.val();
+    if($name == "") {
+      $yourname.html("Anonymous!");
+    }
+    else { $yourname.html($name+"!"); }
+  });
+  e.preventDefault();
+});
+
+// copy
+balapaCop("Step by Step Form", "#999");
+</script>
+<script>
+	var showModal = (modalName)=>{$('#'+modalName).modal('setting','transition','fade right').modal('show');}
+	$('#change-admin-password-option').click(()=>{showModal('change-admin-password-modal');});
+	$('#view-email-notifications-list-option').click(()=>{showModal('view-mail-list-modal');});
+	$('.ui.dropdown').dropdown();
+</script>
+<script>
+	$('#delete_branch_confirmation_input').on('input',
+		()=>{
+
+			$('#delete_user_form_error').text('')
+
+		}
+	);
+</script> 
+<!-- Script to reset delete form when hidden -->
+<script>
+	$('#delete_data_Modal').modal(
+		{
+			onHidden: ()=>{
+				$('#delete_branch_confirmation_input').val('')
+				$('#delete_user_form_error').text('')
+				$('#delete_branch_confirmation_input').attr('style','')
+			}
+			,
+		}
+	);
+
+	$('#add_data_Modal').modal(
+			{
+				onHidden: ()=> {
+
+					$('#id_branch_name').val('')
+					$('#id_branch_password').val('')
+					$('#id_verify_password').val('')
+					$('#report_password_error').text('')
+
+					$('#id_branch_name').removeAttr('style')
+					$('#id_branch_password').removeAttr('style')
+					$('#id_verify_password').removeAttr('style')
+
+					password_error = true
+					username_error = true
+
+					password_error_message = ''
+					username_error_message = ''
+
+				}
+				,
+			}
+	);
+</script>
+<!-- Script to validate and submit delete branch form -->
+<script>
+	$('#delete_branch_form').on('submit',
+			(e)=>{
+				if ( $('#delete_branch_confirmation_input').val() == '') {
+					e.preventDefault()
+					$('#delete_user_form_error').text('Enter admin password.')
+					$('#delete_branch_confirmation_input').attr('style', 'border:1px solid red;')
+
+				}
+				else{
+					//put chosen branches in form.
+					$('tr[chosen="true"]').each(
+						function (){
+							$('#branches_to_delete').append(
+								`<input name="branches_to_delete" value="${$(this).children().first().text()}"/>`
+							);
+						}
+					);
+					if( $('#branches_to_delete').has('input').length ? false : true ){//if no branch selected.
+						$('#delete_user_form_error').text('Select a branch from the table.')
+						e.preventDefault()
+					}
+					else{
+						$('#confirm_delete_branch_button').attr('class','ui loading button')
+					}
+				}
+
+			}
+	);
+	$('#confirm_delete_branch_button').click( 
+		()=>{
+			$('#delete_branch_form').submit();
+		}
+	);
+</script>
+<script>
+	if({{error}}){
+		toastr.error( '{{message}}' )
+	}
+	else{
+		if({{success}}){
+			toastr.success('{{message}}')
+		}
+	}
+</script>
+
+<!-- Script to validate add branch form -->
+<script>
+	 var password_error = true
+	 var username_error = true
+
+	 var password_error_message = ''
+	 var username_error_message = ''
+
+	$('#add_new_branch_form').on('submit',
+		(e)=>{
+			if(password_error){e.preventDefault(); $('label[id="report_password_error"]').text(password_error_message);  }
+			else{ 
+				if(username_error){ 
+					e.preventDefault(); $('label[id="report_password_error"]').text(username_error_message);
+				}
+				else{$('label[id="report_password_error"]').text('')}
+			}
+		}
+	);
+	$('#id_branch_name').on('input', 
+		function(){
+			if ( /[a-z]/.test( $(this).val() ) ) {
+				$(this).attr('style', 'border:1px solid red;'); username_error = true; username_error_message = 'Branch name must only contain uppercase'; $('label[id="report_password_error"]').text(username_error_message);
+			}
+			else{$(this).removeAttr('style'); username_error = false; if (!password_error){ $('label[id="report_password_error"]').text('');}else{$('label[id="report_password_error"]').text(password_error_message);} }
+		}
+
+	);
+
+	$("#id_branch_password").on('input', 
+		function(){
+			if ($('#id_branch_password').val() != $('#id_verify_password').val() && $('#id_verify_password').val() != '' ){
+				$(this).attr('style', 'border:1px solid red;')
+				$('#id_verify_password').attr('style', 'border:1px solid red;')
+				password_error = true
+				password_error_message = 'Passwords do not match.'
+				$('label[id="report_password_error"]').text(password_error_message);
+			}
+			else{$(this).removeAttr('style'); $('#id_verify_password').removeAttr('style'); password_error =false; 	if(!username_error){ $('label[id="report_password_error"]').text('');}else{$('label[id="report_password_error"]').text(username_error_message);} }
+		}
+	);
+
+	$("#id_verify_password").on('input', 
+		function(){
+			if ( $('#id_branch_password').val() != $('#id_verify_password').val() && $('#id_branch_password').val() != ''  ){
+				$(this).attr('style', 'border:1px solid red;')
+				$('#id_branch_password').attr('style', 'border:1px solid red;')
+				password_error = true
+				password_error_message = 'Passwords do not matchs.'
+				$('label[id="report_password_error"]').text(password_error_message);
+			}
+			else{$(this).removeAttr('style');$('#id_branch_password').removeAttr('style');password_error = false;password_error_message = '';if(!username_error){ $('label[id="report_password_error"]').text('');}else{$('label[id="report_password_error"]').text(username_error_message);}    }
+
+		}
+	);
+</script>
+
+<!-- Script to show add a branch modal -->
+<script>
+	$('#add_branch_button').click(
+		()=>{
+				$('#add_data_Modal').modal('show')
+		}
+	);
+</script>
+
+<!-- Script to select a row in branches table -->
+<script>
+	$('[name="table_row"]').click( function (){
+		if ( $(this).prop('style')['backgroundColor'] == 'rgb(227, 228, 229)' ){
+			$(this).prop('style', 'background-color:white;')
+			$(this).removeAttr('chosen');
+		}
+		else{  $(this).prop('style', 'background-color:rgb(227, 228, 229);'); $(this).attr('chosen','true');  }
+		
+	});
+</script>
+
+<!-- Script to show de-activate notification modal -->
+<script>
+	$('#delete_branch_button').click(
+		()=>{
+			$('#delete_data_Modal').modal('show')
+		}
+	);
+</script>
+
+{%if branch_name == 'Admin'%}
+<!-- Script to handle reset password modal for admin -->
+<script>
+	//set new_branch_password back to normal if error
+	$('#new_branch_password').on('input',
+		function (){
+			$(this).removeAttr('style')
+		}
+
+	);
+	//set admin_password_for_reset back to normal if error.
+	$('#admin_password_for_reset').on('input',
+		function (){
+			$(this).removeAttr('style')
+		}
+
+	);
+	//show modal when reset button clicked
+	$('#reset_password_button').click(
+			()=>{
+				$('#reset_password_modal').modal('show') 
+			}
+	);
+
+	//handle form validation and selecting chosen branches before submit
+	$('#reset_password_form').submit(
+		(e)=>{
+				//selecting chosen branches 
+				$('tr[chosen="true"]').each(
+					function(){
+
+						$('#selected_rows').append(
+							`
+								<input type="text" name="branches_to_reset" hidden value="${$(this).attr('id')}"/>
+
+							`
+						)
+					}
+
+				);
+				if($('#selected_rows').has('input').length ? false : true){
+						e.preventDefault()
+						$('#report_branch_password_error').text('Select a branch from the table to delete.')
+
+						return
+				}
+
+				if ( $('#new_branch_password').val().length < 8) {
+						e.preventDefault();
+						$('#new_branch_password').attr('style', 'border:1px solid red')
+						$('#report_branch_password_error').text('New password must be at least 8 characters')
+						
+				}
+				else{
+					if($('#admin_password_for_reset').val() < 8){
+						e.preventDefault();
+						$('#admin_password_for_reset').attr('style', 'border:1px solid red')
+
+						$('#report_branch_password_error').text('Admin password must be 8 or more characters')
+
+
+					}
+					else{
+						$('#new_branch_password').removeAttr('style')
+						$('#report_branch_password_error').text('')
+						
+						$('#reset_password_form_submit_button').attr('class', 'ui loading button')
+
+					}
+				}
+
+		}
+	);
+
+	//reset form when reset branch password modal is closed
+	$('#reset_password_modal').modal(
+		{
+			onHide : ()=>{
+
+				$('#new_branch_password').removeAttr('style')
+				$('#new_branch_password').val('')
+				$('#report_branch_password_error').text('')
+				$('#selected_rows').children().remove()
+				$('#admin_password_for_reset').val('')
+
+			}
+			,
+		}
+	);
+</script>
+
+<script>
+		$('#add_new_branch_form').submit(
+				()=>{
+					$('#add_data_Modal_submit_button').removeAttr('style')
+					$('#add_data_Modal_submit_button').attr('class', 'ui loading button')
+				}
+		);
+</script>
+{%endif%}
+{%endblock scripts%}

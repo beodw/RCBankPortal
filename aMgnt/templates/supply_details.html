@@ -1,0 +1,891 @@
+{% extends "base.html" %} 
+{%load static%}
+{%load remove_underscore%} <!-- Load custom tag to remove underscore -->
+{%load filter_attr%}
+
+{%block AdditionalAssets%} 
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/toastr-position-hot-fix.css' %}">
+<style>
+  .ui.blue.button {background-color: #024fcc; color: white;}
+  svg{margin-left: auto; margin-right: auto;}
+</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+ <div class='container-fluid'>
+  <div class='row mb-3'>
+    <h1 style="text-align: center;"class="w-100">Supply For {{supply.branch}}</h1>
+  </div>
+  <!-- Card for hardware details -->
+              <div class="row">
+                    <div class="col-5">
+                        <!-- <h3> Branch - {{supply.branch}} </h3> -->
+                    </div>
+                    <div class="col-7 d-flex flex-row-reverse">
+                      {%if branch_name == 'IT SUPPORT' and supply.status != 'Problem'%}
+                                <!--<button id='print_supply_button' class="ui label btn-sm ml-1" style='background-color: #0040a6; color: white;'>
+                                  Generate Supply Letter
+                                </button>-->
+
+                      {%endif%}
+                      {%if supply.status == 'Problem' and branch_name == 'IT SUPPORT'%}
+                              <button id='resend_supply_button' class="ui label btn-sm ml-1" style='background-color: #0040a6; color: white;'>
+                                Resend
+                              </button>
+                      {%endif%}
+                      {%if user.username == 'Admin'%}
+                            <a>
+                                <button id="delete_supply_button" class="mr-3 ui tiny icon button" style="background-color: #c70000; color:white;">
+                                      Delete Supply
+                                </button>
+                              </a>
+                        {%endif%}
+                    </div>
+                    <div class="col d-flex flex-row-reverse extra">
+                        {%if supply.status == 'Pending' and branch_name == supply.branch%}
+                            <a class="col-auto" id="reject_supply_button">
+                                <button class="ui label bg-danger">
+                                    <i class="x icon"></i>Reject Supply
+                                </button>
+                            </a>
+
+                            <a id="confirm_receipt_button" onclick="confirm('{{hardware.id}}')">
+                              <button class="ui label bg-success">
+                                    <i class="check icon"></i>
+                                    Confirm Details
+                              </button>
+                            </a>
+                        {%endif%}
+                    </div>
+              </div>
+
+              <div class="row">
+                   <div class="col-auto">
+                      <h3 class="mb-2 pb-0">
+                          Date of supply - {{supply.date_of_supply}}
+                      </h3>
+                      <h3 class="mt-1 mb-1 pt-0"> 
+                        <label> Receiving staff</label> - {{supply.assigned_to}}
+                      </h3>
+                      <h3 class="mt-0 mb-1 pt-0">
+                          <label>Status</label> - {%if supply.status == 'Pending'%}Not yet confirmed{%elif supply.status == 'Received'%}Confirmed{%elif supply.status == 'System_Init'%}Supplied Before System Integration
+                            {%elif supply.status == 'Problem'%}
+                              Problem Found
+                            {%endif%}
+                      </h3>
+                      {%if supply.status == 'Received' %}
+                        <h3 class="mt-0 mb-1 pt-0">
+                          Date of confirmation - {{supply.date_of_supply}}
+                        </h3>
+                      {%endif%}
+                   </div>
+              </div>
+<div class="row w-100">
+              <!-- <div class="col ui divided items"> -->
+                    {%for hardware in list_of_hardware%}
+                    {%if hardware.hardware_type == 'SystemUnit' %}
+                      {% static 'aMgnt/assets/google icons/desktop_windows_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type == 'Laptop'%}
+                      {% static 'aMgnt/assets/google icons/laptop_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type == 'Server'%}
+                      {% static 'aMgnt/assets/google icons/dns_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'scanner'%}
+                        {% static 'aMgnt/assets/google icons/scanner_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'printer' %}
+                      {% static 'aMgnt/assets/google icons/print_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'router' %}
+                      {% static 'aMgnt/assets/google icons/router_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'switch' %}
+                      {% static 'aMgnt/assets/google icons/router_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'mouse' %}
+                      {% static 'aMgnt/assets/google icons/mouse_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'keyboard' %}
+                      {% static 'aMgnt/assets/google icons/keyboard_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'monitor' %}
+                      {% static 'aMgnt/assets/google icons/desktop_windows_black_48dp.svg' as icon_url %}
+                    {%elif hardware.hardware_type|lower == 'tablet' %}
+                      {% static 'aMgnt/assets/google icons/tablet_mac_black_48dp.svg' as icon_url %}
+                    {%endif%}
+                    <h1 class="ui center aligned icon header">
+                      <img style="margin-left:auto;margin-right:auto;" class="md-48" src="{{icon_url}}">
+                    </h1>
+                      <!-- <div class="item"> -->
+                        <!-- <div class="content"> -->
+                              <!-- <a class="header">Hardware {{forloop.counter}}</a> -->
+                                    <!-- <div class="extra"> -->
+                                      <table class="table table-striped table-hover w-100 mb-5" id="{{hardware.id}}">
+                                        {% if branch_name != 'IT SUPPORT' %}
+                                      <thead>
+                                    <tr>
+                                        <th >
+                                          <div class="row w-100">
+                                            <div class="col-6">
+                                            <!-- Hardware {{forloop.counter}}-->
+                                              <!-- <br> -->
+                                              
+
+                                            </div>
+                                            {%if branch_name != 'IT SUPPORT' and branch_name != 'Admin' and supply.status == 'Received'%}
+                                             
+                                                <div class="col-6 d-flex flex-row-reverse">
+                                                  <button id="assigned_to_staff_button"class="ui tiny button yellow" style="color: black;" onclick="assign_to({{hardware.id}})">Assign To A Role</button>
+                                                </div>
+                                          
+                                            {%endif%}
+                                         
+                                          </div>
+                                        
+                                        </th>
+                                       </tr>
+                                  
+                                      </thead>
+                                       {%endif%}
+
+                                        {%if branch_name == 'IT SUPPORT' and supply.status == 'Problem'%}
+                                        <thead>
+                                          <th>
+                                            <div class="d-flex flex-row-reverse">
+                                                  <button class="edit_supply_button ui label" style="background: #0040a6; color: white;" onclick="edit_hardware({{hardware.id}}, {{forloop.counter}} )">
+                                                      Edit Details
+                                                  </button>
+                                             
+                                            </div>
+                                          </th>
+                                        </thead>
+                                          {%endif%}
+
+                                      {%for attribute, val in hardware.items%}
+                                       
+                                        {%if attribute == '_state' or attribute == 'id' or attribute == 'is_replaced' or attribute == 'is_received' or attribute == 'supply_id' or attribute == 'hardware_ptr_id' or attribute == 'software_capable_hardware_ptr_id' or attribute == 'department' or attribute == 'assigned_to'%}
+                                        <!-- Do Nothing -->
+                                        {%elif attribute == 'assigned_to' and val == '' or attribute == 'date_of_supply' and val == ''%}
+                                        <!-- Do nothing-->
+                                        {%else%}
+                                         <tr >
+                                          <td class="{{hardware.id}}" style="text-align: center;">
+                                           <h3> <!-- <div style="text aliwidth:400px;margin-left: auto; margin-right: auto;"> -->
+                                        <!-- <div class="row" style="background: {%cycle '#f2f2f2' 'white' %};"> -->
+                                              <!-- <h4> <span class=""> -->
+                                                {{attribute|rm_und|capfirst}} : {% if val is True %} Yes {%elif val is False%} No {%elif val == ''%} None {%elif val == 'SystemUnit'%} WorkStation {%else%} {{val}} {%endif%}
+                                              <!-- </span></h4> -->
+                                        <!-- </div> --></h3>
+                                         </td>
+                                        </tr>
+                                        {%endif%}
+                                         
+                                      {%endfor%}
+                                      </table>
+                                      
+                                      <hr>
+                                      
+                                    <!-- </div> -->
+                                 
+                                    <!-- </div> -->
+                      <!-- </div> -->
+                    {%empty%}
+                       <h3 class="ml-2" style="color: #c70000;><strong><p style="color:red;">All records for this supply have been deleted. {%if user.username != 'Admin'%}Contact admin for clarification.{%endif%}</strong></h3>
+                    {%endfor%}
+              <!-- </div> --> 
+</div>
+
+      </div>
+
+      </div>
+
+</div>
+
+  <hr>
+
+  <!-- Probblems log to impleemtn later -->
+{%if 1 == 2 %}
+  <!-- Incidents Log -->
+  <div class='row container-fluid'>
+
+    <div class='col'>
+      <h3 style="padding-left: 6px">Problems Log</h3>
+    </div>
+    <div class='col-auto'>
+       <!-- <button class='btn btn-sm' style='background-color: #003ce0; color: white;' data-target='#new_incident_Modal' data-toggle='modal'>Report A Problem</button> -->
+    </div>
+    
+  </div>
+
+  <div class='row'>
+    <div class='card-body'>
+            <table  id='incidents_table' class='table table-striped table-hover'>
+              <tbody style="font-size: 11px;">
+              {%for incident in incidents%}
+                <tr id='{{forloop.counter}}' onclick="show_incident('{{forloop.counter}}', '{{incident.id}}')">
+                  <td>  <h6>Incident {{forloop.counter}}</h6>
+                          <h6 id='date_of_occurence{{forloop.counter}}'>Date Of Occurence : {{incident.date_of_incident|date:'Y-m-d'}}</h6> <h6 id='status{{forloop.counter}}'>Status : {{incident.status}}</h6>
+                          <textarea id='description{{forloop.counter}}' readonly rows="4" cols="50" hidden> {{incident.description}}</textarea>
+                          <textarea hidden  id='resolution{{incident.id}}'>{{incident.steps_taken_to_resolve}}</textarea>
+                          <input hidden id="date_of_resolution{{incident.id}}" value="{{incident.date_of_resolution}}" />
+                  </td>
+                  </tr>
+              {%empty%}
+                <tr>
+                  <td>
+                    <div>
+                      No Incidents
+                    </div>
+                  </td>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+    </div>
+  </div>
+
+  {%endif%}
+</div>
+
+</div>
+
+<!-- Modal input form to view an incident -->
+<div id="incident_modal" class="modal fade">  
+      <div class="modal-dialog modal-lg">  
+           <div class="modal-content">  
+                <div class="modal-header">  
+                    <div align="left">  
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      
+                    </div>
+                     <h4 id='title'>Incident</h4>       
+                </div>  
+            <div id='incident_modal_body' class="modal-body">  
+                <form method="post" id="resolve_form"> 
+                  {%csrf_token%}
+               
+                   <h4>Incident Details</h4>
+                   <hr>
+                     <h6 id='date_of_occurence' class='pb-2'>Date of Occurence : </h6>
+                     
+                     <h6 id='status' class='pb-2'>Status : Resolved</h6>
+                     
+                     <h6>Description</h6>  
+                     <textarea id='incident_modal_description' class='w-100' readonly></textarea>
+                     <br>
+                     <br>
+                     
+                   <div id='resolution_details'>
+                     <h4>Resolution Details</h4>
+
+                       <hr>
+             <!-- Date of Resolution Filled in with jquery -->
+                       <h6 id='dor' class='pb-2'> </h6>
+                       
+                       <h6> Steps Taken To Resolve</h6>
+                       <!-- Steps taken to resolve filled in with Jquery -->
+                       <textarea id='show_resolution' class='w-100' readonly> </textarea>
+                   </div>
+
+                </div>  
+                <div class="modal-footer justify-content-between" id="incident_modal_footer">  
+                  <div id='resolve_button_container' class="row">
+                  {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin'%}
+                      <button type='button' onclick='add_resolution_form()' class="btn btn-sm" style='background-color: #003ce0; color: white;'>Resolve</button>
+                  {%endif%}
+               
+                   </div>
+                </div> 
+                  
+                  <input type="text" name="purpose" value="resolve_incident" hidden />
+                  <input type="text" name="id" value="{{hardware.id}}" hidden />
+                  <input value="{{hardware.hardware_type}}" name="hardware_type" hidden />
+                </form>   
+           </div>  
+      </div>  
+ </div>
+
+ <!-- Modal input form to add new incident -->
+<div id="new_incident_Modal" class="modal fade" data-backdrop="static">  
+      <div class="modal-dialog modal-lg">  
+           <div class="modal-content">  
+                <div class="modal-header">  
+                    <div align="left">  
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      
+                    </div>
+                     <h4>Report Incident</h4>       
+                </div>  
+            <form method="post"> 
+            {%csrf_token%}
+              <div class="modal-body" id='add_hardware_modal'>
+                        <label for="date_of_incident">Date of Incident</label>   
+                        <input required type="date" name="date_of_incident" class="form-control ">
+
+
+                        <label class="pt-3" for="is_severe">Severity</label>
+            <select name="is_severe" class="form-control" required>
+              <option value="" selected disabled hidden>--Choose--</option>
+                <option value="True">Severe</option>
+                <option value="False">Non Severe</option>
+            </select>
+
+
+                        <label for="description" class="pt-3">Description</label>  
+                        <textarea required class="form-control" name="description"></textarea>
+                        <br>
+                </div>  
+                <div class="modal-footer justify-content-between">  
+                     <button type="submit" class="btn btn-sm" style='background-color: #003ce0; color: white;'>Report</button> 
+                </div> 
+
+                <input type="text" value="new_incident" name="purpose" hidden />
+                <input type="text" name="id" value="{{hardware.id}}" hidden />
+                <input value="{{hardware.hardware_type}}" name="hardware_type" hidden />
+
+            </form>   
+           </div>  
+      </div>
+</div> 
+
+
+
+<!-- Modal input form to confirm supply. -->
+<div class="ui mini modal" id="delete_supply_modal">
+  <div class="header">
+     <h3>Delete Supply</h3> 
+  </div>
+  <div class="content">
+    <div class="description">
+        <form name='delete_supply_form' method="post"> 
+            {%csrf_token%}
+              <div class="row mb-1">
+                <em><h4 style="color: #c70000;">Warning, deleting this supply will also delete all corresponding hardware. This action cannot be undone!
+                </h4></em>
+              </div>
+              <div class="row">
+                <label>Enter admin password:</label>
+                <input type="password" name="admin_password" class="form-control">
+              </div>
+        
+              <div hidden>
+                <!-- <input type="number" name="hardware_id" id="hardware_id" hidden> -->
+                <input type="text" name="purpose" value="delete_supply" hidden>
+                <input name="sup_id" value="{{sup_id}}" hidden/>
+              </div>
+    </div>
+
+  </div>
+  <div class="actions">
+     <button id='confirm_receipt_modal_submit_button' style="background-color: #c70000; color:white;" type="submit" class="ui tiny icon button">Confirm</button> 
+  </div>
+          </form>
+</div>
+
+
+
+<!-- Modal input form to confirm supply. -->
+<div class="ui mini modal" id="confirm_receipt_modal">
+  <div class="header">
+     <h3>Confirmation </h3> 
+  </div>
+  <div class="content">
+    <div class="description">
+        <form id='confirm_receipt_modal_form' name='confirm_receipt_form' method="post"> 
+            {%csrf_token%}
+              <div class="row mb-1">
+                <em><h4> By clicking 'Confirm' you acknowledge that the details of this supply match what was received.
+                </h4></em>
+              </div>
+              <div class="row">
+                <label>Enter branch password:</label>
+                <input type="password" id="branch_password" name="branch_password" class="form-control">
+              </div>
+        
+              <div hidden>
+                <!-- <input type="number" name="hardware_id" id="hardware_id" hidden> -->
+                <input type="text" name="purpose" value="confirm_hardware" hidden>
+                <input name="sup_id" value="{{sup_id}}" hidden/>
+              </div>
+    </div>
+
+  </div>
+  <div class="actions">
+   
+     <button id='confirm_receipt_modal_submit_button'  type="submit" class="ui button bg-success">Confirm</button> 
+  </div>
+          </form>
+</div>
+
+
+
+<form id="print_supply_form" method="post" action="{% url 'print_supply' %}" hidden>
+  {%csrf_token%}
+  <input type="text" name="sup_id" value="{{sup_id}}" hidden>
+  <input type="text" name="purpose" value="print_supply" hidden>
+  <!-- <input type="text" name="hardware_type" value="{{hardware.hardware_type}}" hidden> -->
+</form>
+
+<!-- Modal input form to assign hardware to staff -->
+<div class="ui small modal" id="assign_modal">
+  <div class="header">
+     <h3>Assign Hardware<i class="close icon"></i></h3> 
+  </div>
+  <div class="content">
+    <div class="description">
+        <form id='assign_modal_form' name='assign_modal_form' method="post"> 
+            {%csrf_token%}
+             <!--  <div class="row mb-1">
+                <em><h4> By clicking 'Confirm' you acknowledge that the details of this supply match what was received.
+                </h4></em>
+              </div> -->
+              <div class="row">
+                <label>Enter role name:</label>
+                <input type="text" id="assign_to_staff_name" required name="staff_name" class="form-control" placeholder="e.g. Admin Manager">
+
+                <label>Enter department:</label>
+                <input type="text" name="department" required id="assign_to_department_name" class="form-control" placeholder="e.g. Risk Department">
+              </div>
+        
+              <div hidden>
+                <input type="number" name="hardware_id" id="hardware_id" hidden>
+                <input type="text" name="purpose" value="assign_hardware" hidden>
+               <input name="sup_id" value="{{sup_id}}" hidden/>
+              </div>
+    </div>
+
+  </div>
+  <div class="actions">
+     <button id='assign_to_staff_modal_submit_button'  type="submit" class="ui button bg-warning">Assign</button> 
+  </div>
+          </form>
+</div>
+
+
+<!-- Modal input form to assign hardware to staff -->
+<div class="ui large modal" id="edit_supply_modal">
+  <div class="header">
+     <h3>Editing  <span id="editing_supply_description_hardware_label"></span><i class="close icon"></i></h3> 
+  </div>
+  <div class="content">
+    <div class="description" id="editing_supply_description">
+        <form id='edit_supply_modal_form' name='edit_supply_modal_form' method="post"> 
+            {%csrf_token%}
+             <!--  <div class="row mb-1">
+                <em><h4> By clicking 'Confirm' you acknowledge that the details of this supply match what was received.
+                </h4></em>
+              </div> -->
+              <div class="row mb-2" style="padding-left: 8px;">
+                  <h3 id="editing_supply_description_hardware_label"></h3>
+              </div>
+
+              <div id="hardware_details_container">
+               
+              </div>
+        
+              <div hidden>
+                <input type="number" name="hardware_id" id="edit_hardware_id" hidden>
+                <input type="text" name="purpose" value="edit_supply" hidden>
+                <input name="sup_id" value="{{sup_id}}" hidden/>
+              </div>
+    </div>
+
+  </div>
+  <div class="actions">
+     <button id='edit_supply_modal_submit_button' style="background:#0040a6; color:white;" type="submit" class="ui button">Save</button> 
+  </div>
+          </form>
+</div>
+
+
+<form id="reject_supply_modal_form" method="post" hidden>
+  {%csrf_token%}
+  <input type="text" name="purpose" value="reject_supply" hidden>
+  <input type="number" name="sup_id" value="{{sup_id}}">
+</form>
+
+<form id="resend_supply_form" method="post" hidden>
+  {%csrf_token%}
+  <input type="text" name="purpose" value="resend_supply" hidden>
+  <input type="text" name="supply_id" value="{{sup_id}}" hidden>
+</form>
+
+{%endblock content%}
+
+{%block scripts%}
+<!-- Script to activate update button upon an edit on hardware details -->
+  <!-- <script>
+    $('#update_hardware_details_button').attr('type', 'button')
+    $('.update_hardware_details').change(()=>{ //When a change is made activate submit button
+      $('.footer').show()
+      $('#update_hardware_details_button').attr('type', 'submit')
+    });
+
+
+
+
+  </script> -->
+
+{%csrf_token%}
+{%if branch_name == 'IT SUPPORT'%}
+  <script >
+    $('#resend_supply_button').click(
+      ()=>{
+        $('#resend_supply_form').submit()
+      }
+    );
+    $('#edit_supply_modal_form').submit(
+       ()=>{ $('#edit_supply_modal_submit_button').removeAttr('style'); $('#edit_supply_modal_submit_button').attr('class','ui button loading') }
+    );
+    $('#edit_supply_modal').modal({closable:false})
+    function edit_hardware(table_id, django_template_language_for_loop_counter_val ){
+        $('#edit_hardware_id').val(table_id)//table_id is the same as {{hardware.id}}
+        $('#editing_supply_description_hardware_label').text("Hardware " + django_template_language_for_loop_counter_val)
+        $('#hardware_details_container').html('')
+        $('.'+String(table_id)).each(
+          function(){ 
+           var val = $(this).text().trim()
+           var colon_index = val.search(/:/)
+           var label = val.slice(0,colon_index).trim()
+           var input_val = val.slice(colon_index+1).trim() 
+           if(label == 'Brand and model' || label == 'Serial number' ){
+                // if( /up to date/.test(label) ) {
+                //   if (input_val == "Yes"){ 
+                //        $('#hardware_details_container').append( 
+                //           `<label>${label}</label>
+                //            <select name="${label}" class="form-control mb-1" required>
+                //             <option selected value="True">Yes</option>
+                //             <option value="False">No</option>
+                //            </select>
+                //            ` 
+                //         );
+                //   }
+                //   else{
+                //     if( input_val =="No"){
+                //         $('#hardware_details_container').append( 
+                //             `<label>${label}</label>
+                //              <select name="${label}" class="form-control mb-1" required>
+                //               <option value="True">Yes</option>
+                //               <option selected value="False">No</option>
+                //              </select>
+                //              ` 
+                //           );
+                //     }
+
+                //   }
+                // }
+                // else{
+                    $('#hardware_details_container').append( 
+                      `<label>${label}</label>
+                       <input name="${label}" class="form-control mb-1" required type="text" value="${input_val}">` 
+                    );
+                // }
+            }
+          }
+        );
+        $('#edit_supply_modal').modal('show')
+    }
+  </script>
+  <script>
+    csrf_token = $('[name="csrfmiddlewaretoken"]').val()
+    $('#print_supply_button').click(
+                ()=>{
+                  $('#print_supply_form').submit()
+                  // $.ajax(
+                  //     {
+                  //                   headers: {'X-CSRFToken': csrf_token},
+                  //                   method: "POST",
+                  //                   url: "{%url 'supply_details' 0%}",//0 is placeholder value since url requires one arg.
+                  //                   data: { 
+                  //                     csrfmiddlewaretoken: '', 
+                  //                     sup_id : "{{sup_id}}",
+                  //                     purpose : "print_supply",
+                  //                   }
+                  //                   ,
+                  //                   mode: 'same-origin',
+                  //                   success: (dataReturned, status, jqXHR)=>{
+                  //                     $('#print_supply_button').attr('class', 'ui button btn-sm ml-1')
+
+                  //                       // let pdfWindow = window.open("")
+                  //                       // pdfWindow.document.write(
+                  //                       //     "<iframe width='100%' height='100%' src='data:application/pdf, " +
+                  //                       //     escape(dataReturned) + "'></iframe>"
+                  //                       // )
+
+                  //                        let a = document.createElement("a");
+                  //                        a.href = "data:application/msword"+(dataReturned);
+                  //                        a.download = "Report.docx"
+                  //                        a.click();
+
+
+                  //                   }
+                  //                   , 
+
+                  //                   error: (jqXHR, error, exception)=>{
+                                      
+                  //                   }
+                  //                   ,
+                        
+                  //     }
+                  // );
+
+          }
+);
+
+  </script>
+{%endif%}
+
+<script>
+  $('#assign_modal').modal({
+    closable : false,
+  });
+</script>
+
+<script type="text/javascript">
+  $('#reject_supply_button').click(()=>{
+
+    $('#reject_supply_modal_form').submit();
+
+  });
+</script>
+
+  <script>
+
+    $('update_hardware_details_button').click(function(e) {
+        $(':disabled').each(function(e) {
+            $(this).removeAttr('disabled');
+        })
+    });
+
+  </script>
+
+    <!-- Show hardware details modal onlcick -->
+  <script>
+    $('#hardware_details_table').click( ()=>{
+
+      $('#update_hardware_modal').modal('show')
+
+    });
+    
+  </script>
+  <!-- Script to add description when resolving an incident -->
+
+  <script>
+
+    {%if branch_name == 'IT SUPPORT' or branch_name == 'Admin' %}
+  var res_form_exists = false;
+  function submit_resolution_form(){
+    $('#resolve_form').submit((e)=>{
+    
+    if( $('#steps_to_resolve_description').val() == ''){
+      e.preventDefault()
+    }
+  
+  });
+  }
+  var selected_incident_id;
+    function add_resolution_form(){
+      if (!res_form_exists) {
+        $('#resolve_button_container').remove()
+        $('#resolve_form').append(`
+          <div id='steps_to_resolve'>
+            <hr>
+            <h6>Steps Taken To Resolve</h6>
+          
+            
+              <textarea required style='height:150px;' class='form-control' id='steps_to_resolve_description' name='steps_to_resolve_description'></textarea>
+              <br>
+              <button type='submit' onclick='submit_resolution_form()' class='btn btn-sm' style='background-color:#d60202; color:white;'>Save</button>
+              <button type='button' onclick='close_resolution_form()' class='btn btn-sm btn-outline-secondary'>Close</button>
+
+                <input  hidden type='text' name="incident_id" value="${selected_incident_id}">
+            
+          </div>
+        `);
+        res_form_exists = true
+      
+      }
+      
+    }
+
+    $('#incident_modal').on('hidden.bs.modal', function () {
+
+      close_resolution_form()
+    });
+  function close_resolution_form(){
+    $('#steps_to_resolve').remove()
+    res_form_exists = false
+    var resolve_button = `<div id="resolve_button_container" class="row">
+                  
+                      <button type='button' onclick='add_resolution_form()' class="btn btn-sm" style='background-color: #003ce0; color: white;'>Resolve</button>
+               
+                   </div>`
+           if ( $('#resolve_button_container').length == 0){
+               $('#incident_modal_footer').append(resolve_button)
+           }
+     
+  }
+  {%endif%}
+    function show_incident(id, incident_id){
+      //get modal fields
+      var description = $('#description'+id).text()
+      var date_of_occurence = $('#date_of_occurence'+id).text()
+      var status = $('#status'+id).text().trim()
+      var steps_to_resolve = $('#resolution'+incident_id).text()
+      var date_of_resolution = $('#date_of_resolution'+incident_id).val()
+      if( status == 'Status : Resolved'){
+        $('#resolve_button_container').remove()
+        $('#steps_to_resolve').remove()
+        res_form_exists = false
+        $('#show_resolution').val(steps_to_resolve)
+        $('#dor').html('Date of Resolution : '+date_of_resolution)
+        $('#resolution_details').show()
+      }
+      if(status =='Status : Not Resolved'){
+        $('#resolution_details').hide()//remove resolution section from modal.
+        if ( $('.modal-footer').children().length < 1){//resolve button has been removed i.e. users previous click was on a resolved incident.
+          $('.modal-footer').append("<button id='resolve_button' type='submit' onclick='add_resolution_form()' class='btn btn-sm btn-primary'>Resolve</button>")
+        }
+      }
+      //set modal fields
+      selected_incident_id = incident_id
+      $('#title').html('Incident '+id)//set modal title
+      $('#date_of_occurence').html(date_of_occurence)//set date of occurence
+      $('#incident_modal_description').val(description)//set modal description
+      $('#status').html(status)
+      $('#incident_modal').modal('show')
+    }
+  </script>
+
+
+  <!-- Styling to put toasts in center -->
+  <style>
+    .toast-top-center {
+  top: 115px;
+  margin: 0 auto;
+  }
+  </style>
+  <!-- Scripts to show error if S/N already exists -->
+  <script>
+    if({{error}}){
+      toastr.error('{{message}}')
+    }
+    else { 
+      if({{success}}){
+        toastr.success('{{message}}')
+      } 
+    }
+    // else{
+    //  if ( {{replacing}} ) {
+    //    toastr.success('Hardware Replaced Successfully', 'Status')
+    //  }
+    // }
+    
+  </script>
+
+<!-- Script to show confirm modal form onclick -->
+  <script type="text/javascript">
+    function confirm(hardware_id){
+
+      $('#hardware_to_confirm').remove()
+
+
+      $('#hardware_id').val("${hardware_id}")//set value of hardware id in confirm form.
+
+
+      $('#confirm_receipt_modal').modal('show')
+
+
+    }
+  </script>
+
+  <script>
+    function submit_confirm_form(){
+      $('#confirm_receipt_modal').submit()
+    }
+    
+  </script>
+
+
+  <script>
+    function assign_to(hardware_id){
+          $('#hardware_id').val(hardware_id)
+          $('#assign_modal').modal('show')
+        }
+  </script>
+
+
+<script>
+  $('.close.icon').click( 
+    ()=>{
+      $('.ui.modal').modal('hide all')
+    } 
+  );
+</script>
+  <script>
+    $('#assign_modal').modal({
+      closable : false,
+      onHidden : ()=>{
+        $("#assign_to_staff_name").attr('style','')
+        $('#assign_to_department_name').attr('style','')
+        $("#assign_to_staff_name").val('')
+        $('#assign_to_department_name').val('')
+      }
+
+    })
+    $('#assign_modal_form').submit(
+
+      (e)=>{
+        if( $('#assign_to_staff_name').val().trim() != '' && $('#assign_to_department_name').val().trim() != '' ){
+
+          $('#assign_to_staff_modal_submit_button').attr('class', 'ui loading button');
+          $('#assign_to_staff_name').val( $('#assign_to_staff_name').val().trim() )
+          $('#assign_to_department_name').val( $('#assign_to_department_name').val().trim() )
+
+        }
+        else{
+           e.preventDefault()
+
+            if ( $('#assign_to_staff_name').val().trim() == '' ){
+              $('#assign_to_staff_name').attr('style','border:1px solid red;')
+              toastr.error('Staff name cannot be empty.')
+            }
+            else{
+              if ( $('#assign_to_department_name').val().trim() == ''  ){
+                $('#assign_to_department_name').attr('style','border:1px solid red;')
+                toastr.error('Department cannot be empty.')
+              }
+            }
+         
+           
+        }
+
+      }
+    );
+  </script>
+
+
+<script type="text/javascript">
+  $('#confirm_receipt_modal').submit(
+      (e)=>{
+
+          if ( $('#branch_password').val() == '') {
+            $('#branch_password').attr('style', 'border:1px solid red;')
+            e.preventDefault();
+          }
+          else{
+              $('#confirm_receipt_modal_submit_button').attr('class', 'ui loading button')
+          }
+
+      }
+
+  );
+
+  $('#confirm_receipt_modal').modal({
+      onHidden : () => {
+        $('#branch_password').attr('style','')
+
+      }
+  });
+  $('#delete_supply_button').click(()=>{$('#delete_supply_modal').modal('show');});
+</script>
+
+{%endblock scripts%}
+
+
+<style type="text/css">
+  tr{font-size: 2px; padding-bottom: 0px; }
+</style>

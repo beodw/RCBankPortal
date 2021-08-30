@@ -1,0 +1,18 @@
+{% extends "sMntBase.html" %} 
+{%load static%}
+
+
+{%block content%}
+
+<h2>Set Quantity</h2>
+<hr>
+<div class="ui segments container w-25">
+	<div class="ui raised segment">
+		<form method="POST" id="setQuantForm">
+			<label>Set Qauntity:</label>
+			<input type="number" name="quant" class="form-control" required />
+			{%csrf_token%}
+		</form>
+	</div>
+</div>
+{%endblock content%}

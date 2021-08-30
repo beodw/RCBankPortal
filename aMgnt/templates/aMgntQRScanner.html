@@ -1,0 +1,144 @@
+{% extends "base.html" %} 
+{%load static%}
+
+{%block AdditionalAssets%}
+<style>.toast-top-center{position: sticky;top: 7%;}</style>
+<link rel="stylesheet" type="text/css" href="{% static 'aMgnt/assets/my_css/semantic-UI-hot-fix.css' %}">
+<style type="text/css">.qr-box{margin-right:auto;margin-left:auto; width:400px;height:400px;}</style>
+{%endblock AdditionalAssets%}
+
+{%block content%}
+<div class="container-fluid">
+	<h1 class="ui center aligned icon header">
+		<img class="md-48" src="{% static 'aMgnt/assets/google icons/qr_code_scanner_black_48dp.svg' %}">
+		<br>
+		Scan QR-Code
+	</h1>
+	<hr>
+	<div class="ui placeholder segment">
+	  <div class="ui one column stackable center aligned grid">
+	    <!-- <div class="ui vertical divider"> -->
+		<!-- </div> -->
+	    <div class="middle aligned row">
+	      <div class="column">
+	        <div class="ui icon header">
+		        <h3>Position QR-Code in the window below...</h3>
+	        </div>
+	        <div>
+		        <video style="width:400px;height:400px; margin-right: auto; margin-left: auto;" id="QR-CodeWindow"></video>
+	        </div>
+	      </div>
+	      <!-- <div class="column"> -->
+	    <!--     <div class="ui icon header">
+	          <h2 id="iconContainer"><i id='hardwareIcon' class="ui desktop icon"></i>
+	          Hardware Summary</h2>
+	        </div>
+	        <div class="content">
+	        	<h3>Branch : <span id='branchText'>--</span></h3>
+	        	<h3>Department : <span id='departmentText'>--</span>
+	        	<h3>Serial No : <span id='serialNoText'>--</span></h3>
+	        	<h3>Hardware Type : <span id='hardwareTypeText'>--</span></h3><br>
+	        </div>
+		    <div style="width:200px;margin-left:auto;margin-right:auto;" class="mt-0">
+				<button disabled id="seeFullDetailsButton" style=" background-color:gray;" class="mdc-fab mdc-fab--extended inline-demo-fab mdc-ripple-upgraded">
+					<div class="mdc-fab__ripple"></div>
+					<i aria-hidden="true" class="material-icons mdc-fab__icon">qr_code_2</i>
+					<span class="mdc-fab__label">See Full Details</span>
+				</button>
+			</div> -->
+	      <!-- </div> -->
+	    </div>
+	  </div>
+	</div>
+</div>
+<div class="ui page dimmer">
+  <div class="content">
+  	<h3>
+  		<strong>Loading</strong>
+		<div class="spinner-grow text-secondary" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+	</h3>
+  </div>
+</div>
+{%csrf_token%}
+{%endblock content%}
+
+
+{%block scripts%}
+<script src="{% static 'aMgnt/assets/plugins/QR-Reader(nimiq)/qr-scanner.umd.min.js' %}"></script>
+<script type="text/javascript">
+	var id = ''
+	var hardwarePageLink = "{% url 'view_asset' 0 ' ' %}";
+	var supplyPageLink =  "{% url 'supply_details' 0 %}";
+	toastr.options = {
+		  "closeButton": false,
+		  "debug": false,
+		  "newestOnTop": false,
+		  "progressBar": false,
+		  "positionClass": "toast-top-center",
+		  "preventDuplicates": true,
+		  "onclick": null,
+		  "showDuration": "300",
+		  "hideDuration": "1000",
+		  "timeOut": "2050",
+		  "extendedTimeOut": "1000",
+		  "showEasing": "swing",
+		  "hideEasing": "linear",
+		  "showMethod": "fadeIn",
+		  "hideMethod": "fadeOut",
+	}
+	function displayHardwareDetails(hardwareDetails){
+		// $('#hardwareIcon').removeAttr('class');
+		// $('#iconContainer').html('');
+		// if(hardwareDetails.HardwareType == "SystemUnit"){
+		// 	$('#iconContainer').html(`<img style="height:95px;width:95px;" src="{%static 'aMgnt/assets/google icons/desktop_windows_black_48dp.svg' %}" /><br>`);
+		// 	$('#hardwareTypeText').text('WorkStation');
+		// }
+		// else if(hardwareDetails.HardwareType == "Laptop"){
+		// 	$('#iconContainer').html(`<img style="height:95px;width:95px;" src="{%static 'aMgnt/assets/google icons/laptop_black_48dp.svg' %}" /><br>`);
+		// }
+		// else if(hardwareDetails.HardwareType == "Server"){
+		// 	$('#iconContainer').html(`<i class='ui server icon'></i>`);
+		// }
+		// else if(hardwareDetails.HardwareType.toLowerCase() == 'printer'){
+		// 	$('#iconContainer').html(`<img style="height:95px;width:95px;" src="{%static 'aMgnt/assets/google icons/print_black_48dp.svg' %}" /><br>`);
+		// }
+		// else if(hardwareDetails.HardwareType.toLowerCase()=='scanner'){
+		// 	$('#iconContainer').html(`<img style="height:95px;width:95px;" src="{%static 'aMgnt/assets/google icons/copy_all_black_48dp.svg' %}" /><br>`);			
+		// }
+		// else{
+		// 	$('#iconContainer').html(`<img style="height:95px;width:95px;" src="{%static 'aMgnt/assets/google icons/desktop_windows_black_48dp.svg' %}" /><br>`);
+		// }
+		// $('#branchText').text(hardwareDetails.Branch);
+	 //    $('#departmentText').text(hardwareDetails.Department);
+	 //    $('#serialNoText').text(hardwareDetails.SerialNo);
+	 //    if(hardwareDetails.HardwareType != "SystemUnit"){
+		//     $('#hardwareTypeText').text(hardwareDetails.HardwareType);
+		// }
+		if(hardwareDetails.status == 'Received' || hardwareDetails.status == 'System_Init'){
+	    	var link = hardwarePageLink.slice(0,16)+'/'+hardwareDetails.id+'/'+hardwareDetails.HardwareType;
+		}
+		else{
+			var link = supplyPageLink.slice(0,21)+hardwareDetails.supplyId;
+		}
+		$(document).click();
+		window.navigator.vibrate(200);
+		location = link;
+	}
+	function getHardwareDetails(qrLink){
+		hardwareId = parseInt(qrLink.slice(36,39));
+		if (hardwareId == NaN){ 
+			hardwareId = parseInt(qrLink.slice(37,30));
+			if (hardwareId == NaN){toastr.error('Invalid QR-Code');return;}
+		}
+		$.ajax("{% url 'aMgntQRScanner' %}",{method:'POST',data:{csrfmiddlewaretoken:$('input[name="csrfmiddlewaretoken"]').val(),id:hardwareId},success:(response)=>{
+			if(response.success){if(id!=hardwareId){id=hardwareId;$('.ui.page.dimmer').dimmer('show');$('#seeFullDetailsButton').removeAttr('disabled');$('#seeFullDetailsButton').attr('style','background-color:#0040a6;');displayHardwareDetails(response.hardwareDetails);}}else{toastr.error('Could not find any hardware matching that QR code.');}},error:(response)=>{toastr.error('Could not connect to server.');}});
+
+	}
+	QrScanner.WORKER_PATH = "{% static 'aMgnt/assets/plugins/QR-Reader(nimiq)/qr-scanner-worker.min.js' %}";
+	const qrScanner = new QrScanner(document.getElementById('QR-CodeWindow'), qrLink =>{ getHardwareDetails(qrLink) });
+		qrScanner.start();
+	$('#seeFullDetailsButton').click(()=>{location.replace(link);});
+</script>
+{%endblock scripts%}
