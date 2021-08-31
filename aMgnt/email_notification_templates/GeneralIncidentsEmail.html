@@ -2,36 +2,58 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>General Incident Notification</title>
   <style type="text/css">
     .linear-gradient{outline: none;background-image: linear-gradient(0.35turn, #369dc9, #e8a864);}
-   /* .glow:hover{
-                width: 90%;
-                border-style: solid; 
-                border-width: 1px; 
-                outline: none;
-                border-color: #9ecaed;
-                box-shadow: 0 0 20px 1px #9ecaed;
-              }*/
+    .linear-gradient:hover{cursor: pointer;}
+    .container{
+        width: 80%;
+        margin: auto;
+        display: block;
+        align-items: center;
+        justify-content: center;
+    }
+    @media only screen and (max-width: 600px) {
+        .center-text-mobile{padding: 0px 0px 0px 10px;width:50%;margin:auto;}
+        .linear-gradient {
+          min-width: 70%;
+        }
+        .container{
+          width: 100%;
+        }
+    }
+    .glow{
+        width: 90%;
+        border-style: none; 
+        /*border-width: 1px; */
+        outline: none;
+        /*border-color: #c7e6ff;*/
+        box-shadow: 0 0 50px 1px /*#c9d0d6*/ #c9d0d6;
+    }
   </style>
 </head>
 <body>
-  <div style="margin: auto; width: 75%; padding: 10px; align-items: center; justify-content: center;">
-    <div style="margin: auto; width: 50%; justify-content: center; background-color: blue;">
-        <img src="data:image/png;base64,{{ rokel_logo }}" style="margin: auto;width:100px; height: 100px; border-radius:50%;">
+  <div class="container">
+    <div style="margin: auto; width: 100px; height: 100px; display: flex; justify-content: center;">
+        <img class="glow" src="data:image/png;base64,{{ rokel_logo }}" style="margin: auto;width:100px; height: 100px; border-radius:50%;">
     </div>
-    <div style="margin: auto; width: 100%; justify-content: center;">
-      <h1 style="margin: auto; width: 90%;">There Are Unresolved Incidents</h1>
+    <div style="padding: 15px 0px 15px 0px; margin: 0px; width: 100%; display: flex; justify-content: center; align-items: center;">
+      <h1 class="center-text-mobile">There Are Unresolved Incidents</h1>
     </div>
-    <div class="linear-gradient glow" style="width: 100%;justify-content: center; align-items: center; padding: 15px; margin: auto; border-radius: 30px; width:50%;">
-      <h2 style="margin:auto; width:50%; color: white;">Take A Look</h2>
+    <div style="margin: auto; width: 100%;display: flex; justify-content:center; align-items: center;">
+        <a href="http://10.93.101.35" style="width: 50%; display: block;text-decoration: none; border-radius:30px;">
+          <div class="linear-gradient" style="width:100%;margin: auto;padding: 15px 0px 15px 0px;border-radius: 30px; display: flex; justify-content:center;">
+            <h2 style="color: white;">Take A Look</h2>
+          </div>
+        </a>
     </div>
-    <div style="margin: 10px auto auto auto;width:50%; justify-content: center; align-items: center;">
-      <p style="margin: auto; width: 80%; color:grey; font-size: 10px;">Copyright &copy; {{ year }} RCBank. All rights reserved.</p>
+    <div style="padding: 2px;margin: 10px auto auto auto;width:50%;display: flex; justify-content: center; align-items: center;">
+      <p style="color:grey; font-size: 10px;">Copyright &copy; {{ year }} RCBank. All rights reserved.</p>
     </div>
     <hr>
     <div style="background-color: rgba(230, 230, 230, 0.5); border-radius: 5px; padding:10px;">
-      <p style="font-family:serif;">You are receiving this email because you have been added to the recipient list.<br> Contact IT SUPPORT <a href="mailto:rtayorsmith@rokelbank.sl">IT SUPPORT</a> to be removed.</p>
+      <p style="font-family:serif;">You are receiving this email because you have been added to the recipient list.<br> Contact <a href="mailto:rtayorsmith@rokelbank.sl">IT SUPPORT</a> to be removed.</p>
     </div>
   </div>
 </body>
