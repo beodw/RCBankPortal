@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     # 'notifier',
 ]
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -141,8 +139,11 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'default'
 
 # SMTP Settings.
-EMAIL_HOST = 'aetrf.tech'
+EMAIL_HOST = 'mail.rokelbank.sl'
 EMAIL_PORT = 465 #SSL on SMTP
-DEFAULT_FROM_EMAIL = 'noreply@rokelbank.sl'
-EMAIL_HOST_USER = 'noreply@rokelbank.sl'
-EMAIL_HOST_PASSWORD = 'P@33w0rd54321'
+DEFAULT_FROM_EMAIL = 'rcbankportal@rokelbank.sl'
+EMAIL_HOST_USER = 'rcbankportal@rokelbank.sl'
+EMAIL_HOST_PASSWORD = '$ss65tIN1wD!' #'P@33wOrd54321'
+
+
+

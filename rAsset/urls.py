@@ -22,5 +22,4 @@ urlpatterns = [
     path('asset/',include('aMgnt.urls')),
     path('nMeet/',include('nMeet.urls')),
     path('sMnt/',include('sMnt.urls')),
-    path('testEmail/',include('testEmail.urls')),
 ]

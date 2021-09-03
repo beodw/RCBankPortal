@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>General Incident Notification</title>
   <style type="text/css">
-    .linear-gradient{outline: none;background-image: linear-gradient(0.35turn, #369dc9, #e8a864);}
+    .linear-gradient{
+      padding: 15px 0px 15px 0px;
+      border-radius: 30px;
+      outline: none;background-image: linear-gradient(0.35turn, #369dc9, #e8a864);
+    }
     .linear-gradient:hover{cursor: pointer;}
     .container{
         width: 80%;
@@ -15,8 +19,9 @@
         justify-content: center;
     }
     @media only screen and (max-width: 600px) {
-        .center-text-mobile{padding: 0px 0px 0px 10px;width:50%;margin:auto;}
+        .center-text-mobile{padding: 0px 0px 0px 10px;width:50%;margin:auto; text-align: center;}
         .linear-gradient {
+          font-size: 13px;
           min-width: 70%;
         }
         .container{
@@ -36,20 +41,22 @@
 <body>
   <div class="container">
     <div style="margin: auto; width: 100px; height: 100px; display: flex; justify-content: center;">
-        <img class="glow" src="data:image/png;base64,{{ rokel_logo }}" style="margin: auto;width:100px; height: 100px; border-radius:50%;">
+        <img class="glow" alt="RCBLogo" title="RCBLogo" src="data:image/jpeg;base64,{{ rokel_logo }}" style="display: block;margin: auto; width:100px; height: 100px; border-radius:50%;">
     </div>
     <div style="padding: 15px 0px 15px 0px; margin: 0px; width: 100%; display: flex; justify-content: center; align-items: center;">
-      <h1 class="center-text-mobile">There Are Unresolved Incidents</h1>
+      <h1 class="center-text-mobile" style="text-align: center; width: 100%; margin: auto;">
+          There Are Unresolved Incidents
+      </h1>
     </div>
     <div style="margin: auto; width: 100%;display: flex; justify-content:center; align-items: center;">
-        <a href="http://10.93.101.35" style="width: 50%; display: block;text-decoration: none; border-radius:30px;">
-          <div class="linear-gradient" style="width:100%;margin: auto;padding: 15px 0px 15px 0px;border-radius: 30px; display: flex; justify-content:center;">
-            <h2 style="color: white;">Take A Look</h2>
+        <a href="http://10.93.101.35" style="margin: auto;width: 50%; height: 60%; display: block;text-decoration: none; border-radius:30px;">
+          <div class="linear-gradient" style="background-color: #1c3175;width:100%;margin: auto; display: flex; justify-content:center;">
+            <h2 style="color: white; margin:auto; width:50%; text-align: center;">Take A Look</h2>
           </div>
         </a>
     </div>
     <div style="padding: 2px;margin: 10px auto auto auto;width:50%;display: flex; justify-content: center; align-items: center;">
-      <p style="color:grey; font-size: 10px;">Copyright &copy; {{ year }} RCBank. All rights reserved.</p>
+      <p style="color:grey; font-size: 10px; margin: auto; width: 100%; text-align: center;">Copyright &copy; {{ year }} RCBank. All rights reserved.</p>
     </div>
     <hr>
     <div style="background-color: rgba(230, 230, 230, 0.5); border-radius: 5px; padding:10px;">

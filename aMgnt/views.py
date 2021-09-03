@@ -385,6 +385,7 @@ class View_asset(View):
         # and the current date
         details.pop('purpose')
         if System_unit_form_components(details).is_valid():
+            print(details['id'])
             old_hardware = System_unit.objects.get(id=details['id'])
             old_hardware.is_replaced = True
 
@@ -470,7 +471,7 @@ class View_asset(View):
                 # Form components for replace hardware modal
                 context['add_software_capable_hardware_components'] = Software_capable_hardware_form_components()
                 context['hardware_type'] = kwargs['type']
-            elif kwargs['type'] == 'WorkStation' or kwargs['type'] == 'Laptop':
+            elif kwargs['type'] == 'WorkStation' or kwargs['type'] == 'Laptop' or kwargs['type'] == 'SystemUnit':
                 hardware = System_unit.objects.get(
                     id=kwargs['id'], is_received=True, is_replaced=False)
                 holder = hardware.__dict__

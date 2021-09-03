@@ -445,7 +445,7 @@ label.radio .emot .mouth.sad {
 			  <div class="menu">
 			    <div id="view-email-notifications-list-option" class="item">
 			     <i class="ui envelope icon"></i>
-			      View Email Notifications List
+			      Edit Email Notifications List
 			    </div>
 			    <div id="change-admin-password-option" class="item">
 			      <i class="ui key icon"></i>
@@ -604,31 +604,26 @@ label.radio .emot .mouth.sad {
     			<h1 style="font-family: serif;font-weight: bold;">Email Notifications List</h1>
     		</div>
     		<hr>
-    		<div class="deleteModalMessage d-flex justify-content-center" style="margin:auto;">
-				  <h3 style="color:red; font-weight: bold;">
-	    				Warning: The dashboard holds all the figures for every branch.
-	    		</h3>
-				</div>
-				 <div class="deleteModalMessage d-flex justify-content-center" style="margin:auto; "> 
-					 	<h3 style="color:red; font-weight: bold;">Once it is cleared this action <em>cannot</em> be undone!
-					 	</h3> 
-				 </div>
-				  
     	</div>
     </div>
   </div>	    	
-  <form method="post" id="clear-dashboard-form" action="{% url 'nMeetClearDashboard' %}">
-	  <div class="d-flex justify-content-center mb-5" style="padding: 0px 0px 15px 0px; ">
-	    <div hidden="hidden" id="clear-dashboard-enter-password" class="d-flex justify-content-center p-1" style="width:50%; background-color:white; border-style:solid; border-width:2px; border-color: rgba(0,0,255,0.55);" >
-		    	{%csrf_token%} 
-		    	<input autofocus id="admin-password-input" placeholder="Enter Admin password" class="h-100" style="padding-left:5px;border-radius: 30px; width: 70%;display: inline-block;border:none; outline-width: 0;" type="password" name='admin_password' required minlength="8" />
-		    				
-				  <button type="submit" class="btn" style="height: 42.5px;background: linear-gradient(0.35turn, #369dc9, #e8a864); border-color: white; margin: 0px 0px 0px 10px; width: 30%;display: inline-block; color:white; ">
-				  	<span>Submit</span>
-				  </button>
-	    </div>
-	  </div>
-</form>
+  <div class="d-block" style="padding: 0px 0px 15px 0px; ">
+  		<!-- Email notifications form  -->
+  		{%for val in '123456789'%}
+  		<div id="{{val}}" class="emailListRow d-flex justify-content-center mb-3 p-2" style="position: relative;margin: auto;width:75%; ">
+  			<input value="rtaylorsmith@rokelbank.sl" class="mr-3" style="border-top: none; border-left: none; border-right: none; padding:10px; width:50%; height:35px;">
+  			<button class="ui blue mini icon button" style="border-radius:30px; height:30px; width:60px;">
+  				<i class="pencil icon"></i>
+  			</button>
+  			<button onclick="popEmail({{val}})" class="ui red mini icon button" style="border-radius:30px; height:30px; width:60px;">
+  				<i class="x icon"></i>
+  			</button>
+  		</div>
+  		{%endfor%}
+ 
+    
+  </div>
+	
 </div>
 
 <div class="ui modal" id="change-admin-password-modal" >
@@ -776,7 +771,7 @@ $secondButton.on("click", function(e){
 });
 
 // copy
-balapaCop("Step by Step Form", "#999");
+// balapaCop("Step by Step Form", "#999");
 </script>
 <script>
 	var showModal = (modalName)=>{$('#'+modalName).modal('setting','transition','fade right').modal('show');}
@@ -1062,6 +1057,33 @@ balapaCop("Step by Step Form", "#999");
 					$('#add_data_Modal_submit_button').attr('class', 'ui loading button')
 				}
 		);
+</script>
+<script type="text/javascript">
+	$('.modalCloser').click(()=>{$('.ui.modal').modal('hide');});
+	function popEmail(id){
+		idAsString = '#' + String(id);
+
+		$( idAsString ).transition('fade');
+
+		var emailListLen = $('.emailListRow').length;
+
+		for(var i=1; i<emailListLen; i++){
+					if (i > id){
+						var idOfCurrentEmailRow = '#' + String(i);
+						var yOffSet = "-=" +  String( $(idOfCurrentEmailRow).height() ) + "px";
+						console.log(yOffSet);
+						$(idOfCurrentEmailRow).animate(
+								{
+					         top: yOffSet,
+					         easing: "easein",
+					     	}, 
+					     400
+				     );
+					}
+		}
+		$( idAsString ).removeClass('emailListRow');
+		
+	}
 </script>
 {%endif%}
 {%endblock scripts%}

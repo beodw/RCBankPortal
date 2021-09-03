@@ -100,7 +100,12 @@
 			{% if user.username == 'Admin' %}
 			<div class="col-4"><h1 class="header">Chat</h1></div>
 			<span class="col-4 mb-0 d-flex justify-content-center pt-3" style="color: red; font-weight: bold; margin-bottom:0px;"><h4 id="chat-error" hidden></h4></span>
-			<div class="col-4 d-flex flex-row-reverse"><button id="clear-chat-button" style="border-radius:30px;" class="ui bg-warning tiny button">Clear Chat</button></div>{%elif user.username == 'IT SUPPORT'%}<div class="col-4"><h1 class="header">Chat</h1></div><span class="col-4 mb-0 d-flex justify-content-center pt-3" style="color: red; font-weight: bold; margin-bottom:0px;"><h4 id="chat-error" hidden></h4></span>	<div class="col-4 d-flex flex-row-reverse"><button id="freeze-chat-button" style="width:50px;height:40px;border-radius:10px;background-color: #0040a6; color: white;" class="ui tiny icon button"><i class="large open lock icon"></i></button></div>{%else%}<div class="col-4"><h1 class="header"></h1></div><span class="col-4 d-flex justify-content-center mb-0 pt-3" style="color: black; font-weight: bold; margin-bottom:0px;"><h1 class="ui dividing header">Chat</h1></span><div class="col-4"></div>{%endif%}
+			<div class="col-4 d-flex flex-row-reverse"><button id="clear-chat-button" style="border-radius:30px;" class="ui bg-warning tiny button">Clear Chat</button></div>{%elif user.username == 'IT SUPPORT'%}<div class="col-4"><h1 class="header">Chat</h1></div><span class="col-4 mb-0 d-flex justify-content-center pt-3" style="color: red; font-weight: bold; margin-bottom:0px;"><h4 id="chat-error" hidden></h4></span>	<div class="col-4 d-flex flex-row-reverse">
+<div id="freeze-chat-button" style="background-color: #0040a6; color: whitesmoke; border-radius:35px; height: 35px; width:50px; display: flex; align-items:center; justify-content: center;" class="ui mini icon button freeze-chat-button" tabindex="0">
+    <i class="lock open icon"></i>
+    <i class="lock icon" id="lock-icon" style="display: none;"></i>
+</div>
+<!--<button id="freeze-chat-button" style="width:50px;height:40px;border-radius:10px;background-color: #0040a6; color: white;" class="ui tiny icon button"><i class="large open lock icon"></i></button>--></div>{%else%}<div class="col-4"><h1 class="header"></h1></div><span class="col-4 d-flex justify-content-center mb-0 pt-3" style="color: black; font-weight: bold; margin-bottom:0px;"><h1 class="ui dividing header">Chat</h1></span><div class="col-4"></div>{%endif%}
 		</div>
 		<!-- <hr> -->
 		<div  id="chat-text-area" class="w-100" style="overflow-y:auto;overflow-x:auto;height: 300px;"></div>
@@ -265,7 +270,7 @@
 	var clearing = false;
 	var chatIsFrozen = false;
   var toggleEnterAdminPassword = ()=>{
-			$('#clear-dashboard-options').transition({animation:'fade',onComplete:()=>{alert('done')},});
+			$('#clear-dashboard-options').transition({animation:'fade',onComplete:()=>{},});
 	}
 	// $('#clear-dashboard-enter-password').on('input',(event)=>{$('#admin-password-input').css('border-color','blue');});
 	$('#admin-password-input').on('focusout focusin input', (focusEvent)=>{
@@ -281,9 +286,6 @@
 						}
 						$('#clear-dashboard-enter-password').css('border-color',borderColor);
 	});
-	$('#freeze-chat-button').click(()=>{ if(chatIsFrozen){$('#freeze-chat-button').html(`<i class="large open lock icon"></i>`);$('#freeze-chat-button').css('background-color','#0040a6');$('#freeze-chat-button')
-  .transition('pulse');chatIsFrozen=false;}else{ $('#freeze-chat-button').css('background-color','#bd0d00'); $('#freeze-chat-button').html(`<i class="large lock icon"></i>`);$('#freeze-chat-button')
-  .transition('pulse');chatIsFrozen=true;}});
 	$('.modalCloser').click(()=>{$('.ui.modal').modal('hide');});
 	$(document).ready(()=>{
 		//Initialize dataTable that refreshes intermittently using ajax.
@@ -360,7 +362,7 @@
 		//If so remove from messages array and use jquery to remove from chat section and notify user of deletion.
 		
 		var chat = Array(); // [ [...,message_id] , [...,message_id], [...,message_id], ... ]
-		$.ajax("{% url 'nMeetChat' %}",{method:"GET",success:(response)=>{console.log(response.chat);chat = response.chat; for(row of response.chat){$('#chat-text-area').append(`<div padding-left:0px; padding-right:20px;" class="mt-0 ui compact floating message"><button onClick="showDeleteMessageWarning(${row[3]})" style="background-color: rgba(127.5,127.5,127.5,0.1);border-radius:50%;justify-content:center; padding: 10px 10px 10px 10px; width:30px;" class="ui button deleteMessage"> <i class="x icon"></i></button><span class="message">( ${row[0]} ) ${row[1]} : </span><p style="position:absolute; left:200px; margin: 0px 0px 0px 40px;"> ${row[2]}</p></div><br/>`);scrollToLastMessage(30);} },error:()=>{toastr.error('The chat serivce is currently unavailable.', 'Error')}});
+		$.ajax("{% url 'nMeetChat' %}",{method:"GET",success:(response)=>{chat = response.chat; for(row of response.chat){$('#chat-text-area').append(`<div padding-left:0px; padding-right:20px;" class="mt-0 ui compact floating message"><button onClick="showDeleteMessageWarning(${row[3]})" style="background-color: rgba(127.5,127.5,127.5,0.1);border-radius:50%;justify-content:center; padding: 10px 10px 10px 10px; width:30px;" class="ui button deleteMessage"> <i class="x icon"></i></button><span class="message">( ${row[0]} ) ${row[1]} : </span><p style="position:absolute; left:200px; margin: 0px 0px 0px 40px;"> ${row[2]}</p></div><br/>`);scrollToLastMessage(30);} },error:()=>{toastr.error('The chat serivce is currently unavailable.', 'Error')}});
 		//Handling deleted messages.
 		var deleted_messages = Array();
 		$.ajax("{% url 'nMeetDeletedMessages' %}",{
@@ -446,5 +448,28 @@
 	});
 	//To remove tinyMCE branding.
 	window.onload = function(){$('.tox-statusbar__branding').remove();}
+</script>
+<script type="text/javascript">
+	function freezeChatTransition(){
+		if(chatIsFrozen){
+			chatIsFrozen=false;
+			$('.lock.open.icon').transition({
+				animation:'fade left',
+				duration:200,
+			});
+			$('#lock-icon').transition({animation:'fade right',duration:100,});
+			$('.freeze-chat-button').css('background-color','#0040a6');
+		
+		}else{ 
+			chatIsFrozen=true;
+			$('#lock-icon').transition({
+				animation:'fade right',
+				duration:200,
+			});
+			$('.lock.open.icon').transition({animation:'fade left',duration:100,});
+			$('.freeze-chat-button').css('background-color','#e63402');
+		}
+	}
+	$('.freeze-chat-button').click(freezeChatTransition);
 </script>
 {%endblock scripts%}

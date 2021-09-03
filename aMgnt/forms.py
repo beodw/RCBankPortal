@@ -172,7 +172,7 @@ class Replace_hardware_form(forms.ModelForm):
 			'brand_and_model' : forms.TextInput(attrs=gen_attrs( {'placeholder':'e.g. Dell OptiPlex 3080'}) ),
 			'date_of_supply' : forms.DateInput(attrs=gen_attrs( {'type':'date'}) ),
 
-			'branch': forms.Select(attrs={'class' :'form-control', 'required':'', 'style':'background:white; pointer-events:none;'}, choices=branches),
+			'branch': forms.Select(attrs={'class' :'form-control', 'required':'', 'style':'background:white;'}, choices=branches),
 			'hardware_type': forms.TextInput(attrs=gen_attrs(),),
 			# 'department' : forms.TextInput(attrs=gen_attrs({'placeholder' : 'e.g. Finance Department'}, to_remove=['required'])),
 		}

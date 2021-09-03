@@ -21,8 +21,8 @@ def send_general_incidents_email_notifications(recipient_email_list=['test@rokel
         email_template = email_template.replace('{{ '+ val +' }}',context[val])
     message = emails.html(
         html=email_template,
-        subject='Incident Notifications',
-        mail_from=('noreply',EMAIL_HOST_USER),
+        subject='Incidents Notification',
+        mail_from=('RCBankPortal', EMAIL_HOST_USER),
         )
 
     # Create a secure SSL context
@@ -30,9 +30,9 @@ def send_general_incidents_email_notifications(recipient_email_list=['test@rokel
 
     # Send email notification to whom it may concern.
     with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT, context=context) as server:
-        server.login(recipient_email_list[0], "IgRZJE=5%Uzq")
+        server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
         for recipient_email in recipient_email_list:
-            server.sendmail(recipient_email,recipient_email,message.as_string())
+            server.sendmail(EMAIL_HOST_USER,recipient_email,message.as_string())
         server.quit()
 
     return 'Email notifications sucessfully sent'
