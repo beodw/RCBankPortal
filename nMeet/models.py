@@ -15,5 +15,3 @@ class Chat(TimestampsModel,models.Model):
 	text = models.CharField(max_length=200)
 class Cancelled(models.Model):
 	id_of_cancelled_fig = models.BigIntegerField(blank=False,null=False)
-class DeletedMessage(models.Model):
-	message_id = models.CharField(max_length=20)

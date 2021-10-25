@@ -14,6 +14,4 @@ urlpatterns = [
 				path('saveDashboard/',login_required(views.nMeetSaveDashboard),name='nMeetSaveDashboard'),
                 path('cancelFigs/',login_required(views.nMeetCancelFigs.as_view()),name="nMeetCancelFigs"),
                 path('upload_summary_file',login_required(views.nMeet_upload_summary_file),name="nMeet_upload_summary_file"),
-                path('nMeetDeletedMessages',login_required(views.get_deleted_messages),name="nMeetDeletedMessages"),
-                path('nMeetDeleteMessage', login_required(views.deleteMessage),name="nMeetDeleteMessage"),
 			]

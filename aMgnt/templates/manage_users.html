@@ -920,7 +920,7 @@ $secondButton.on("click", function(e){
 				$(this).attr('style', 'border:1px solid red;')
 				$('#id_branch_password').attr('style', 'border:1px solid red;')
 				password_error = true
-				password_error_message = 'Passwords do not matchs.'
+				password_error_message = 'Passwords do not match.'
 				$('label[id="report_password_error"]').text(password_error_message);
 			}
 			else{$(this).removeAttr('style');$('#id_branch_password').removeAttr('style');password_error = false;password_error_message = '';if(!username_error){ $('label[id="report_password_error"]').text('');}else{$('label[id="report_password_error"]').text(username_error_message);}    }
@@ -993,7 +993,6 @@ $secondButton.on("click", function(e){
 						$('#selected_rows').append(
 							`
 								<input type="text" name="branches_to_reset" hidden value="${$(this).attr('id')}"/>
-
 							`
 						)
 					}
@@ -1060,14 +1059,12 @@ $secondButton.on("click", function(e){
 </script>
 <script type="text/javascript">
 	$('.modalCloser').click(()=>{$('.ui.modal').modal('hide');});
+	var emailListLen = $('.emailListRow').length;
 	function popEmail(id){
 		idAsString = '#' + String(id);
-
-		$( idAsString ).transition('fade');
-
-		var emailListLen = $('.emailListRow').length;
-
-		for(var i=1; i<emailListLen; i++){
+		$( idAsString ).transition('fade');//semantic ui toggle visibility.
+		for(var i=1; i<=emailListLen; i++){
+			console.log(i, id)
 					if (i > id){
 						var idOfCurrentEmailRow = '#' + String(i);
 						var yOffSet = "-=" +  String( $(idOfCurrentEmailRow).height() ) + "px";

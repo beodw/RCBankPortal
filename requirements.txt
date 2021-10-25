@@ -31,3 +31,4 @@ django_celery_results
 django_celery_beat
 jinja2
 emails
+celery

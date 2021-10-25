@@ -22,9 +22,13 @@ from django.contrib.auth.hashers import make_password, check_password
 def sMntSetQuantity(request):
 	try:
 		if request.method == 'POST':
-			init = Init.objects.all()[0]
-			init.final_serial_number = request.POST['quant'] 
-			init.save()
+			init = Init.objects.all().first()
+			if not bool(init):
+				init = Init(initial_serial_number='0',final_serial_number=request.POST['quant'] )
+				init.save()
+			else:
+				init.final_serial_number = request.POST['quant'] 
+				init.save()
 			return sMntDashboard().get(request,success=True, error=False, message="Quantity successfully set to " + init.final_serial_number)
 		else:
 			return redirect('sMntDashboard')
@@ -54,18 +58,24 @@ class sMntDashboard(View):
                                         error = 'false'
                                         success='false'
                                         message = ''
-                                init = Init.objects.all()[0]
+                                init = Init.objects.all().first()
+                                #Incase the init table is empty for e.g. when manually reinitializing system.
                                 if not bool(init):
-                                        init = []
+                                        init = Init(initial_serial_number='0',final_serial_number='0',current_serial_number='0')
+                                        init.save()
                                 return render(request,self.template,{'date':date,'branches':branches, 'Init':init,'error':error,'message':message, 'success':success})
                         else:
                                 return redirect('redirectLandingPage')
                 except Exception as e:
                         print('\n\n\n',str(e),'\n\n\n')
-                        return HttpResponse()
+                        response = HttRepsonse()
+                        response.status_code = 500 
+                        return response
 	def post(self, request, *args, **kwargs):
+		print('POST request made to sMntDashboard.')
 		return redirect('sMntDashboard')
 def sMntAddRecord(request):
+	print('\n\n\n', request.POST, '\n\n\n\n')
 	try:
 		form = urllib.parse.parse_qs( request.POST['statement'] )
 		if ',' in form['initial_serial_number'][0]:
@@ -77,12 +87,9 @@ def sMntAddRecord(request):
 		current_serial_number = ''
 		submitted_final_serial_number = int(form['final_serial_number'][0])
 		submitted_initial_serial_number = int(form['initial_serial_number'][0])
-		for integer in init.final_serial_number:
-			final_serial_number += integer
-		for integer in init.initial_serial_number:
-			current_serial_number += integer
-		current_serial_number = int(current_serial_number)
-		final_serial_number = int(final_serial_number)
+		current_serial_number = int(init.initial_serial_number)
+		final_serial_number = int(init.final_serial_number)
+		print(current_serial_number,submitted_initial_serial_number, final_serial_number, submitted_final_serial_number)
 		if submitted_final_serial_number >= final_serial_number or submitted_initial_serial_number >= final_serial_number:
 			return JsonResponse({'error':True,'message':'The serial numbers entered are greater than the maximum quantity.'})
 		elif  submitted_final_serial_number < current_serial_number or submitted_initial_serial_number < current_serial_number:
@@ -96,16 +103,16 @@ def sMntAddRecord(request):
 			date=datetime.datetime.now(),
 		)
 		statement.save()
-		init = Init.objects.all()[0]
+		init = Init.objects.all().first()
 		init.initial_serial_number = statement.final_serial_number 
 		init.save()
-		quant = Quant.objects.filter(date__date=datetime.datetime.now())
+		quant = Quant.objects.filter(date=datetime.datetime.now()).first()
 		if bool(quant):
-			quant[0].current_quant = init.final_serial_number
-			quant[0].total_usage = statement.final_serial_number
-			quant[0].save()
+			quant.current_quant = init.final_serial_number
+			quant.total_usage = statement.final_serial_number
+			quant.save()
 		else:
-			quant = Quant(current_quant=init.final_serial_number,total_usage=statement.final_serial_number)
+			quant = Quant(current_quant=init.final_serial_number,total_usage=statement.final_serial_number, date=datetime.datetime.now())
 			quant.save()
 		return JsonResponse({
 			'date':statement.date.strftime('%a %d %b %Y'),
@@ -123,52 +130,53 @@ def sMntAddRecord(request):
 		print('\n\n\n',str(e),'\n\n\n')
 		return JsonResponse({'error':True,'message':'Could not add record.'})
 def sMntCancelStatments(request):
-	form = urllib.parse.parse_qs( request.POST['statement'] )
-	if ',' in form['Cfinal_serial_number'][0]:
-		form['Cfinal_serial_number'][0] = form['Cfinal_serial_number'][0].replace(',','')
-	if ',' in form['Cinitial_serial_number'][0]:
-		form['Cinitial_serial_number'][0] = form['Cinitial_serial_number'][0].replace(',','')
-	init = Init.objects.all()[0]
-	final_serial_number = ''
-	initial_serial_number = ''
-	submitted_initial_serial_number = int(form['Cinitial_serial_number'][0])
-	submitted_final_serial_number = int(form['Cfinal_serial_number'][0])
-	print(int(init.final_serial_number))
-	# for integer in init.final_serial_number:
-	# 	final_serial_number += integer
-	# for integer in init.initial_serial_number:
-	# 	initial_serial_number += integer
-	initial_serial_number = int(init.initial_serial_number)
-	final_serial_number = int(init.final_serial_number) 
-	if submitted_initial_serial_number >= final_serial_number or submitted_final_serial_number >= final_serial_number:
-		return JsonResponse({'error':True,'message':'The serial numbers entered exceed the maximum quantity.'})
-	if submitted_final_serial_number < initial_serial_number + 1 or submitted_initial_serial_number < initial_serial_number + 1:
-		return JsonResponse({'error':True, 'message':'The serial numbers entered are below the current serial no.'})
-	cancelled_statement = Cancelled(
-		initial_serial_number=form['Cinitial_serial_number'][0],
-		final_serial_number=form['Cfinal_serial_number'][0],
-		cancellation_date=datetime.datetime.now()
-	)
-	cancelled_statement.save()
-	init = Init.objects.all()[0]
-	init.initial_serial_number = cancelled_statement.final_serial_number 
-	init.save()
-	quant = Quant.objects.filter(date__date=datetime.datetime.now())
-	if bool(quant):
-		quant[0].current_quant = init.final_serial_number
-		quant[0].total_usage = cancelled_statement.final_serial_number
-		quant[0].save()
-	else:
-		quant = Quant(current_quant=init.final_serial_number, total_usage=cancelled_statement.final_serial_number)
-		quant.save()
-	return JsonResponse({
-		'initial_serial_number':cancelled_statement.initial_serial_number,
-		'final_serial_number':cancelled_statement.final_serial_number,
-		'useage':str( int(cancelled_statement.final_serial_number) - int (cancelled_statement.initial_serial_number) + 1),
-		'remaining_stock':( int(init.final_serial_number) - int (init.initial_serial_number) ) + 1,
-		'total_usage':init.initial_serial_number,
-		'current_serial_number':str(int(init.initial_serial_number) + 1),
-	})
+	try:
+                form = urllib.parse.parse_qs( request.POST['statement'] )
+                if ',' in form['Cfinal_serial_number'][0]:
+                        form['Cfinal_serial_number'][0] = form['Cfinal_serial_number'][0].replace(',','')
+                if ',' in form['Cinitial_serial_number'][0]:
+                        form['Cinitial_serial_number'][0] = form['Cinitial_serial_number'][0].replace(',','')
+                init = Init.objects.all().first()
+                if not bool(init):
+                        return JsonResponse({'error':True,'message':'The quantity has not yet been set!!'})
+                final_serial_number = ''
+                initial_serial_number = ''
+                submitted_initial_serial_number = int(form['Cinitial_serial_number'][0])
+                submitted_final_serial_number = int(form['Cfinal_serial_number'][0])
+                initial_serial_number = int(init.initial_serial_number)
+                final_serial_number = int(init.final_serial_number) 
+                if submitted_initial_serial_number >= final_serial_number or submitted_final_serial_number >= final_serial_number:
+                        return JsonResponse({'error':True,'message':'The serial numbers entered exceed the maximum quantity.'})
+                if submitted_final_serial_number < initial_serial_number + 1 or submitted_initial_serial_number < initial_serial_number + 1:
+                        return JsonResponse({'error':True, 'message':'The serial numbers entered are below the current serial no.'})
+                cancelled_statement = Cancelled(
+                        initial_serial_number=form['Cinitial_serial_number'][0],
+                        final_serial_number=form['Cfinal_serial_number'][0],
+                        cancellation_date=datetime.datetime.now()
+                )
+                cancelled_statement.save()
+                init = Init.objects.all().first()
+                init.initial_serial_number = cancelled_statement.final_serial_number 
+                init.save()
+                quant = Quant.objects.filter(date=datetime.datetime.now()).first()
+                if bool(quant):
+                        quant.current_quant = init.final_serial_number
+                        quant.total_usage = cancelled_statement.final_serial_number
+                        quant.save()
+                else:
+                        quant = Quant(current_quant=init.final_serial_number, total_usage=cancelled_statement.final_serial_number, date=datetime.datetime.now())
+                        quant.save()
+                return JsonResponse({
+                        'initial_serial_number':cancelled_statement.initial_serial_number,
+                        'final_serial_number':cancelled_statement.final_serial_number,
+                        'useage':str( int(cancelled_statement.final_serial_number) - int (cancelled_statement.initial_serial_number) + 1),
+                        'remaining_stock':( int(init.final_serial_number) - int (init.initial_serial_number) ) + 1,
+                        'total_usage':init.initial_serial_number,
+                        'current_serial_number':str(int(init.initial_serial_number) + 1),
+                })
+	except Exception as e:
+		print('\n\n\n',str(e),'\n\n\n')
+		return JsonResponse({'errror':True,'message':'Could not cancel statement.'})
 def sMntGenReport(request):
 	try:
 		initial_date = datetime.datetime.strptime(request.POST['initialDate'], '%Y-%m-%d')
@@ -226,11 +234,11 @@ def sMntGenReport(request):
 				summary_table.cell(0,4).add_paragraph().add_run('Today\'s Usage').bold = True
 				summary_table.cell(0,5).add_paragraph().add_run('Total Printed').bold = True
 				init = Init.objects.all()[0]
-				quantity_at_that_date = Quant.objects.get(date__date=initial_date)
+				quantity_at_that_date = Quant.objects.get(date=initial_date)
 				summary_table.cell(1,0).add_paragraph(str(total_usage+1))
 				summary_table.cell(1,1).add_paragraph(quantity_at_that_date.current_quant)
 				summary_table.cell(1,2).add_paragraph(str(total_usage))
-				summary_table.cell(1,3).add_paragraph(str( int(quantity_at_that_date.current_quant) - total_usage ))
+				summary_table.cell(1,3).add_paragraph(str( int(quantity_at_that_date.current_quant) - total_usage + 1 ) )
 				summary_table.cell(1,4).add_paragraph(str(todays_usage))
 				summary_table.cell(1,5).add_paragraph( str(total_printed) )
 				document.add_heading('I.T MANAGER\t\t\t\t\t\t\tACCOUNTANT', level=2)
@@ -287,11 +295,11 @@ def sMntGenReport(request):
 					summary_table.cell(0,4).add_paragraph().add_run('Today\'s Usage').bold = True
 					summary_table.cell(0,5).add_paragraph().add_run('Total Cancelled').bold = True
 					init = Init.objects.all()[0]
-					quantity_at_that_date = Quant.objects.get(date__date=initial_date)
+					quantity_at_that_date = Quant.objects.get(date=initial_date)
 					summary_table.cell(1,0).add_paragraph(str(total_usage+1))
 					summary_table.cell(1,1).add_paragraph(quantity_at_that_date.current_quant)
 					summary_table.cell(1,2).add_paragraph(str(total_usage))
-					summary_table.cell(1,3).add_paragraph(str( int(quantity_at_that_date.current_quant) - total_usage ))
+					summary_table.cell(1,3).add_paragraph(str( int(quantity_at_that_date.current_quant) - total_usage + 1 ) )
 					summary_table.cell(1,4).add_paragraph(str((int(quantity_at_that_date.total_usage)-lowest_serial_number)+1))
 					summary_table.cell(1,5).add_paragraph( str(total_cancelled) )
 					document.add_heading('I.T MANAGER\t\t\t\t\t\t\tACCOUNTANT', level=2)
@@ -314,26 +322,51 @@ def sMntSearch(request):
 			if request.POST['for'] == 'customer_statements':
 				query = request.POST['search[value]']
 				query = Q(branch__contains=query) | Q(customer_name__icontains=query) | Q(acc_no__contains=query) | Q(initial_serial_number__contains=query) | Q(final_serial_number__contains=query) | Q(date__date__contains=query)
-				statements = Statement.objects.filter(query).order_by('-final_serial_number')[:int(request.POST['length'])]
+				holder = Statement.objects.filter(query).order_by('-final_serial_number')
+				statements = holder[int(request.POST['start']):int(request.POST['start']) + int(request.POST['length'])]
 				if bool(statements):
 					rows = [[statement.date.strftime('%A %d. %B %Y'),statement.branch,statement.customer_name,statement.acc_no,statement.initial_serial_number,statement.final_serial_number,str((int(statement.final_serial_number)-int(statement.initial_serial_number))+1)]for statement in statements]
-					return JsonResponse({'draw':int(request.POST['draw']),'recordsTotal':len(rows), 'recordsFiltered':len(rows),'data':rows})
+					return JsonResponse({'draw':int(request.POST['draw']),'recordsTotal':Statement.objects.all().count(), 'recordsFiltered':holder.count(),'data':rows})
 				else:
-					return JsonResponse({'data':[]})
+					return JsonResponse({'recordsTotal':Statement.objects.all().count(), 'recordsFiltered':0,'data':[]})
 			if request.POST['for'] == 'cancelled_statements':
 				query = request.POST['search[value]']
 				query = Q(initial_serial_number__contains=query) | Q(final_serial_number__contains=query) | Q(cancellation_date__date__contains=query)
-				cancelled_statements  = Cancelled.objects.filter(query).order_by('-final_serial_number')[:int(request.POST['length'])]
+				holder = Cancelled.objects.filter(query).order_by('-final_serial_number')
+				cancelled_statements = holder[int(request.POST['start']):int(request.POST['start']) + int(request.POST['length'])]
 				if bool(cancelled_statements):
 					rows = [[cancelled_statement.cancellation_date.strftime('%A %d. %B %Y'),cancelled_statement.initial_serial_number,cancelled_statement.final_serial_number,str((int(cancelled_statement.final_serial_number)-int(cancelled_statement.initial_serial_number))+1)]for cancelled_statement in cancelled_statements]
-					return JsonResponse({'draw':int(request.POST['draw']),'recordsTotal':len(rows), 'recordsFiltered':len(rows),'data':rows})
+					return JsonResponse({'draw':int(request.POST['draw']),'recordsTotal':Cancelled.objects.all().count(), 'recordsFiltered': holder.count(),'data':rows})
 				else:
-					return JsonResponse({'data':[]})
+					return JsonResponse({'recordsTotal':Cancelled.objects.all().count(), 'recordsFiltered':0,'data':[]})
 		else:
 			return redirect('redirectLandingPage')
 	except Exception as e:
 		print('\n\n\n',str(e),'\n\n\n')
 		return redirect('redirectLandingPage')
+class sMntDelSmnt(View):
+        def get(self, request, *args, **kwargs):
+                return redirect('sMntDashboard')
+        def post(self, request, *args, **kwargs):
+                try:
+                    init = Init.objects.all().first()
+                    previous_highest_serial_number = str(int(init.initial_serial_number))
+                    statement = Statement.objects.filter(final_serial_number = previous_highest_serial_number ).first()
+                    cancelled = Cancelled.objects.filter(final_serial_number = previous_highest_serial_number).first()
+                    if bool(statement):
+                            init.initial_serial_number = str(int(statement.initial_serial_number) - 1)
+                            statement.delete()
+                            init.save()
+                            return sMntDashboard().get(request, error=False, success=True, message='Statement for ' + statement.customer_name + ' with initial serial number: ' + statement.initial_serial_number + ' and final serial number: ' + statement.final_serial_number  + ' has been removed.'  )
+                    elif bool(cancelled):
+                            init.initial_serial_number = str(int(cancelled.initial_serial_number) - 1)
+                            cancelled.delete()
+                            init.save()
+                            return sMntDashboard().get(request, error=False, success=True, message='Cancelled Statement with initial serial number: ' + cancelled.initial_serial_number + ' and final serial number ' + cancelled.final_serial_number  + ' has been removed.'  )
+                    raise Exception()
+                except Exception as e:
+                    print('\n\n\n',str(e),'\n\n\n')
+                    return sMntDashboard().get(request, error=True, success=True, message='Could not delete record.' )
 # for val in Statement.objects.all():
 # 	if val.customer_name == 'SALAMATU KARGBO':
 # 		val.delete()

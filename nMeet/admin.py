@@ -5,4 +5,3 @@ from .models import *
 
 admin.site.register(Dashboard)
 admin.site.register(Chat)
-admin.site.register(DeletedMessage)

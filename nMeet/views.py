@@ -55,7 +55,6 @@ class nMeetViewDashboard(View):
 	def get(self, request, *args, **kwargs):
 		#Return the ui for the dashboard page.
 		try:
-			print(request.user.has_perm('nMeet.add_dashboard'))
 			return render(request,'nMeetDashboard.html',{'date':date,'dashboard':True})
 		#Incase error accessing db.
 		except Exception as e:
@@ -182,27 +181,9 @@ def refreshChat(request):
 def nMeetClearChat(request):
 	for message in Chat.objects.all():
 		message.delete()
-	for deleted_message in DeletedMessage.objects.all():
-		deleted_message.delete()
 	response = HttpResponse()
 	response.status_code = 200
 	return response
-def get_deleted_messages(request):
-	deleted_messages_list = [message.message_id for message in DeletedMessage.objects.all()]
-	return JsonResponse({'deleted_messages':deleted_messages_list})
-def deleteMessage(request):
-	if request.method == 'POST':
-		try:
-			deleted_message = Chat.objects.get(id=int(request.POST['message_id']))
-			deleted_message.delete()
-			deleted_message = DeletedMessage(message_id=request.POST['message_id'])
-			deleted_message.save()
-			return JsonResponse({'success':1})
-		except Exception as e:
-			log('\n\n\n' + str(e) + '\n\n\n\n')
-			return JsonResponse({'success':0})
-	else:
-		return JsonResponse({'success':0})
 class nMeetCancelFigs(View):
 	template = 'cancelFigs.html'
 	branches = User.objects.filter(~Q(username="Admin") & ~Q(username="beod") & ~Q(username="IT SUPPORT"))
