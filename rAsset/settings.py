@@ -140,4 +140,4 @@ EMAIL_HOST = 'aetrf.tech' #'mail.rokelbank.sl'
 EMAIL_PORT = 465 #SSL on SMTP
 DEFAULT_FROM_EMAIL = 'rcbankportal@rokelbank.sl'
 EMAIL_HOST_USER = 'rcbankportal@rokelbank.sl'
-EMAIL_HOST_PASSWORD = '$ss65tIN1wD!' #'P@33wOrd54321'
+EMAIL_HOST_PASSWORD = ''
